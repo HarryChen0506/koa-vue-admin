@@ -40,3 +40,7 @@ $ npm run dev
 // 将项目文件拷贝到服务器（除node_modules文件夹）
 $ npm run prd
 ```
+
+## 心得
+1. koa-router
+  - koa-router支持中间件串联，因此可以通过加入jwt中间件来控制路由访问权限，达到鉴权的目的，具有很好的插拔扩展性
