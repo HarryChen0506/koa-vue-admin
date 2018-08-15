@@ -25,3 +25,18 @@ $ npm install
 $ pm2 start ./index.js
 ```
 
+## 项目记录
+1. 后端服务 server
+```
+// 安装koa脚手架，支持koa和koa2
+$ npm install -g koa-generator
+// 初始化项目
+$ koa2 ./server
+$ cd ./server
+$ npm install
+// 启动
+$ npm run dev
+// 部署
+// 将项目文件拷贝到服务器（除node_modules文件夹）
+$ npm run prd
+```

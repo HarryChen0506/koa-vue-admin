@@ -10,4 +10,5 @@ node_modules/
 # Optional npm cache directory
 .npm
 
-
+# node_modules 
+server/node_modules/
