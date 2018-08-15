@@ -31,7 +31,7 @@ $ pm2 start ./index.js
 // 安装koa脚手架，支持koa和koa2
 $ npm install -g koa-generator
 // 初始化项目
-$ koa2 ./server
+$ koa2 ./server -e --ejs
 $ cd ./server
 $ npm install
 // 启动
