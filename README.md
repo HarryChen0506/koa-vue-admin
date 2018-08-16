@@ -40,6 +40,36 @@ $ npm run dev
 // 将项目文件拷贝到服务器（除node_modules文件夹）
 $ npm run prd
 ```
+2. 配置eslint
+```
+// 参考 https://www.cnblogs.com/linx/p/7122560.html
+// 本地安装eslint
+$ npm install eslint --save-dev
+// 初始化
+$ ./node_modules/.bin/eslint --init
+  ❯ Answer questions about your style
+  Use a popular style guide
+  Inspect your JavaScript file(s)
+// 选择standard JSON
+// 在根目录下新建配置文件
+.eslintrc
+{
+  "extends": "standard",
+	"plugins": [
+		"standard",
+		"promise"
+	],
+	"rules": { 
+		"semi": 0,        
+		"quotes": [
+			"error",
+			"single"
+		],
+		"indent": ["error", 2]
+	}
+}
+
+```
 
 ## 心得
 1. koa-router

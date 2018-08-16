@@ -3,11 +3,11 @@ const router = require('koa-router')()
 router.get('/', async (ctx, next) => {
   console.log('中间件1')
   // 在此可以添加校验中间件
-  return await next();
+  await next()
 }, async (ctx, next) => {
   console.log('中间件2')
   // 在此可以添加校验中间件
-  return await next();
+  await next();
 }, async (ctx, next) => {
   console.log('koa')
   await ctx.render('index', {

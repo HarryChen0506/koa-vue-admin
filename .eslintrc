@@ -1,0 +1,16 @@
+
+{
+  "extends": "standard",
+	"plugins": [
+		"standard",
+		"promise"
+	],
+	"rules": { 
+		"semi": 0,        
+		"quotes": [
+			"error",
+			"single"
+		],
+		"indent": ["error", 2]
+	}
+}
