@@ -1,6 +1,3 @@
-// 配置默认环境
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
 const Koa = require('koa')
 const app = new Koa()
 const views = require('koa-views')
@@ -14,9 +11,10 @@ const index = require('./app/routes/index')
 const users = require('./app/routes/users')
 const auth = require('./app/routes/auth')
 
-const accessLogger = require('./app/middlewares/accessLogger.js')
-const config = require('./app/config/index.js')()
-console.log('config', config)
+// const accessLogger = require('./app/middlewares/accessLogger.js')
+// const config = require('./app/config/index.js')(app)
+// console.log('config info', config)
+
 // error handler
 onerror(app)
 
@@ -27,7 +25,7 @@ app.use(bodyparser({
 app.use(json())
 app.use(logger())
 // 自定义logger
-app.use(accessLogger())
+// app.use(accessLogger())
 app.use(require('koa-static')(path.join(__dirname, '/app/public')))
 app.use(views(path.join(__dirname, '/app/views'), {
   extension: 'ejs'

@@ -1,0 +1,18 @@
+{
+  "apps": [
+    {
+      "name": "koa-vue-admin",
+      "cwd": "./",
+      "script": "./bin/www",
+      "error_file": "./logs/app-err.log",
+      "out_file": "./logs/app-out.log", 
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",     
+      "watch": true,
+      "autorestart": true,
+      "env": {
+        "NODE_ENV": "production",
+        "CUSTOM_ENV": "example"
+      }
+    }
+  ]
+}

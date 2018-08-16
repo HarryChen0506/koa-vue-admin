@@ -6,6 +6,7 @@ module.exports = (options, app) => {
     const start = new Date()
     await next()
     const ms = new Date() - start
+    console.log('access options', options)
     console.log(`info ${ctx.method} ${ctx.url} - ${ms}ms`)
   }
 }
