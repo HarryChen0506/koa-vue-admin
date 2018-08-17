@@ -3,8 +3,12 @@
 
 module.exports = (appInfo) => { 
   const config = {
-    custom_env: 'local',
-    local_test: '123'
+    common: {
+      custom_env: 'local',
+      local_test: '123'
+    },
+    middleware: {},
+    plugin: {}
   }
   return config
 }

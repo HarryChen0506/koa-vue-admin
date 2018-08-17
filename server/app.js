@@ -7,6 +7,8 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const path = require('path')
 
+// 路由和服务
+const mongodb = require('./app/plugins/mongodb')
 const index = require('./app/routes/index')
 const users = require('./app/routes/users')
 const auth = require('./app/routes/auth')
@@ -30,6 +32,9 @@ app.use(require('koa-static')(path.join(__dirname, '/app/public')))
 app.use(views(path.join(__dirname, '/app/views'), {
   extension: 'ejs'
 }))
+
+// 数据库mongoose
+mongodb()
 
 // routes
 app.use(index.routes(), index.allowedMethods())

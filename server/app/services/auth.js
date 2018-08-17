@@ -6,12 +6,12 @@ const auth = {
   async createAccessToken ({ userName, id }) {
     // 生成access_token
     const {authToken = {}} = config.middleware || {}
-    const {exp, secret} = authToken
+    const {exp, secret, key} = authToken
     const token = jwt.sign({
       userName,
       id,
-      exp: Math.floor(Date.now() / 1000) + exp,
-      secret: 'secret'
+      key,
+      exp: Math.floor(Date.now() / 1000) + exp
     }, secret)
     return token
   }

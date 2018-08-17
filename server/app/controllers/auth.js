@@ -2,8 +2,7 @@
 const authServive = require('../services/auth')
 exports.login = async (ctx, next) => {
   // const { query, params } = ctx
-  // const { userName, password } = ctx.request.body
-  const userName = 'harry'
+  const { userName, password } = ctx.request.body
   const user = {
     userName,
     _id: 123

@@ -1,6 +1,12 @@
 // 配置文件入口
 'use strict'
 const app = require('../../app.js')
+// config 配置选项
+const configList = [
+  'common',
+  'plugin',
+  'middleware'
+]
 module.exports = (appInfo) => {
   appInfo = appInfo || app
   const NODE_ENV = nodeEnv()
@@ -11,10 +17,10 @@ module.exports = (appInfo) => {
   let config = {}
   switch (NODE_ENV) {
   case 'development':
-    config = Object.assign(CONFIG_DEFAULT, CONFIG_LOCAL)
+    config = mergeConfig(CONFIG_DEFAULT, CONFIG_LOCAL)
     break
   case 'production':
-    config = Object.assign(CONFIG_DEFAULT, CONFIG_PROD)
+    config = mergeConfig(CONFIG_DEFAULT, CONFIG_PROD)
     break
   default:
     config = Object.assign(CONFIG_DEFAULT)
@@ -25,4 +31,16 @@ module.exports = (appInfo) => {
 function nodeEnv () {
   let NODE_ENV = process.env.node_env || 'development'
   return NODE_ENV
+}
+/**
+ * 合并config对象
+ * @param {*} source 合并源
+ * @param {*} target 合并目标
+ */
+function mergeConfig (source, target) {
+  const result = {}
+  configList.forEach(v => {
+    result[v] = {...source[v], ...target[v]}
+  })
+  return result
 }
