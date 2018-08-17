@@ -2,14 +2,26 @@
 const authService = require('../services/auth')
 const util = require('../extends/util')
 exports.login = async (ctx, next) => {
-  // const { query, params } = ctx
-  const {username, password} = ctx.request.body
+  const { query, params, request } = ctx
+  let username, password
+  if (request.method === 'GET') {
+    username = query.username
+    password = query.password
+  } else if (request.method === 'POST') {
+    username = request.body.username
+    password = request.body.password
+  }
   const user = await authService.login({username, password})
+  
   if (!user) {
+    // log
+    ctx.dblog.info(`auth: ${username} login fail`)
     // 用户校验错误
     ctx.body = util.handleResult('fail', null, '用户名或密码不正确')
     return
   }
+  // log
+  ctx.dblog.info(`auth: ${username} login sucess`)
   // 生成token
   const token = await authService.createAccessToken({
     username,

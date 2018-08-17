@@ -6,7 +6,6 @@ exports.index = async (ctx, next) => {
   }
 }
 exports.show = async (ctx, next) => {
-  ctx.log.info('logger text')
   ctx.body = {
     params: ctx.params,
     text: 'this is a user response!!!',
