@@ -12,6 +12,6 @@
 			"single"
 		],
 		"indent": ["error", 2],
-		"camelcase": [2, {"properties": "never"}]
+		"camelcase": [2, {"properties": "never","ignoreDestructuring": true}]
 	}
 }

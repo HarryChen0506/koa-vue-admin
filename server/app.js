@@ -4,10 +4,11 @@ const views = require('koa-views')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
-const logger = require('koa-logger')
+// const logger = require('koa-logger')
 const path = require('path')
 
 // 路由和服务
+const logger = require('./app/middlewares/logger')
 const mongodb = require('./app/plugins/mongodb')
 const errorHandler = require('./app/middlewares/errorHandler')
 const index = require('./app/routes/index')
@@ -22,14 +23,15 @@ const auth = require('./app/routes/auth')
 onerror(app)
 
 // middlewares
+app.use(errorHandler())
 app.use(bodyparser({
   enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
-app.use(logger())
-app.use(errorHandler())
+// app.use(logger())
 // 自定义logger
-// app.use(accessLogger())
+app.use(logger())
+
 app.use(require('koa-static')(path.join(__dirname, '/app/public')))
 app.use(views(path.join(__dirname, '/app/views'), {
   extension: 'ejs'
