@@ -1,7 +1,7 @@
 // 生产环境配置
 'use strict'
 
-module.exports = (appInfo) => { 
+module.exports = (appInfo) => {
   const config = {
     common: {
       custom_env: 'prod',

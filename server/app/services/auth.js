@@ -2,18 +2,32 @@
 'use strict'
 const config = require('../config/index.js')()
 const jwt = require('jsonwebtoken')
+const UserModel = require('../models/user.js')()
 const auth = {
-  async createAccessToken ({ userName, id }) {
+  async createAccessToken ({ username, id }) {
     // 生成access_token
     const {authToken = {}} = config.middleware || {}
     const {exp, secret, key} = authToken
     const token = jwt.sign({
-      userName,
+      username,
       id,
       key,
       exp: Math.floor(Date.now() / 1000) + exp
     }, secret)
     return token
+  },
+  async login ({ username, password }) {
+    return UserModel.findOne({username, password}).exec()
+  },
+  async getUserByUsername (username) {
+    return UserModel.findOne({username}).exec()
+  },
+  async createUser ({username, password}) {
+    const user = new UserModel({
+      username,
+      password
+    })
+    return user.save()
   }
 }
 module.exports = auth

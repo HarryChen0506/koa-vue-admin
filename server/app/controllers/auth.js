@@ -1,33 +1,46 @@
 // auth controller
-const authServive = require('../services/auth')
+const authService = require('../services/auth')
+const util = require('../extends/util')
 exports.login = async (ctx, next) => {
   // const { query, params } = ctx
-  const { userName, password } = ctx.request.body
-  const user = {
-    userName,
-    _id: 123
+  const {username, password} = ctx.request.body
+  const user = await authService.login({username, password})
+  if (!user) {
+    // 用户校验错误
+    ctx.body = util.handleResult('fail', null, '用户名或密码不正确')
+    return
   }
-  // const user = await ctx.service.user.login({ userName, password })
-  // if (!user) {
-  //   // 用户校验错误
-  //   ctx.body = this.ctx.helper.setResE({
-  //     success: false,
-  //     detail: '用户名或密码不正确',
-  //   })
-  //   return
-  // }
   // 生成token
-  const token = await authServive.createAccessToken({
-    userName,
+  const token = await authService.createAccessToken({
+    username,
     id: user._id
   })
-  // 5b46e7acdb2ea107cff550f8
-  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InRlc3QiLCJpZCI6IjViNDZlN2FjZGIyZWExMDdjZmY1NTBmOCIsImV4cCI6MTUzMTM3MzU3OCwic2VjcmV0Ijoic2VjcmV0IiwiaWF0IjoxNTMxMzczNTE4fQ.OSBh9DPZJi4Lp_wJ3y46GweLc_2bBCIz-dSdm7zMm5U
-  // await ctx.service.user.checkAccessToken(td, 'secret')
-  ctx.body = {
-    success: true,
-    userName: user.userName,
+  ctx.body = util.handleResult('success', {
+    username: user.username,
     id: user._id,
     accessToken: token
+  })
+}
+exports.register = async (ctx, next) => {
+  // const { query, params } = ctx
+  const {username, password} = ctx.request.body
+  // 如果参数校验未通过，将会抛出一个 status = 422 的异常
+  // ctx.validate(createRule, { userName, password })
+  const user = await authService.getUserByUsername(username)
+  if (user) {
+    // 有重名用户
+    ctx.body = util.handleResult('fail', null, '当前用户已注册,选择其他名字')
+  } else {
+    // 若检查正常则保存进数据库
+    const {_id, create_time} = await authService.createUser({
+      username,
+      password
+    })
+    ctx.body = util.handleResult('success', {
+      type: 'register',
+      username,
+      id: _id,
+      createTime: Date.parse(create_time)
+    })
   }
 }

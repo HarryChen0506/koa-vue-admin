@@ -9,6 +9,7 @@ const path = require('path')
 
 // 路由和服务
 const mongodb = require('./app/plugins/mongodb')
+const errorHandler = require('./app/middlewares/errorHandler')
 const index = require('./app/routes/index')
 const users = require('./app/routes/users')
 const auth = require('./app/routes/auth')
@@ -26,6 +27,7 @@ app.use(bodyparser({
 }))
 app.use(json())
 app.use(logger())
+app.use(errorHandler())
 // 自定义logger
 // app.use(accessLogger())
 app.use(require('koa-static')(path.join(__dirname, '/app/public')))
