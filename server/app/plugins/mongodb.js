@@ -2,8 +2,9 @@
 'use strict'
 
 const mongoose = require('mongoose')
-const config = require('../config/index.js')()
-module.exports = (options) => {
+// const config = require('../config/index.js')()
+module.exports = (appInfo) => {
+  const {config} = appInfo
   const {dbUrl} = config.plugin.mongodb
   // 链接数据库
   mongoose.connect(dbUrl, {useNewUrlParser: true})

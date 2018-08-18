@@ -16,7 +16,7 @@ const users = require('./app/routes/users')
 const auth = require('./app/routes/auth')
 
 const config = require('./app/config/index.js')(app)
-console.log('app.config', app.config)
+// console.log('app.config', app.config)
 
 // error handler
 onerror(app)
@@ -36,7 +36,7 @@ app.use(views(path.join(__dirname, '/app/views'), {
 }))
 
 // 数据库mongoose
-mongodb()
+mongodb(app)
 
 // routes
 app.use(index.routes(), index.allowedMethods())
