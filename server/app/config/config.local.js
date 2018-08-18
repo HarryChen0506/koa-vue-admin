@@ -7,7 +7,9 @@ module.exports = (appInfo) => {
       custom_env: 'local',
       local_test: '123'
     },
-    middleware: {},
+    middleware: {
+
+    },
     plugin: {}
   }
   return config

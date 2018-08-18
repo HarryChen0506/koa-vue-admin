@@ -1,6 +1,6 @@
 // 默认配置
 'use strict'
-
+const ip = require('ip')
 module.exports = (appInfo) => {
   const config = {}
   config.common = {
@@ -8,8 +8,11 @@ module.exports = (appInfo) => {
     custom_env: 'default'
   }
   config.middleware = {
-    accessLogger: {
-      info: 'access'
+    logger: {
+      dir: 'logs',
+      env: 'development',
+      projectName: 'koa-admin',
+      serverIp: ip.address() // 本项目所在服务器ip
     },
     // authToken鉴权配置
     authToken: {

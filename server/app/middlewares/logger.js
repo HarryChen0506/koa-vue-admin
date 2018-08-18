@@ -1,56 +1,63 @@
 'use strict'
 const log4js = require('log4js');
 const methods = ['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'mark']
+const baseInfo = {
+  // appLogLevel: 'debug',
+  dir: 'logs',
+  env: 'development',
+  projectName: 'koa-project',
+  serverIp: '0.0.0.0'
+}
 module.exports = (options) => {
   /**
- * 指定要记录的日志分类 web
- * 展示方式为文件类型 file
- * 日志输出的文件名 cheese.log
- */
+  * options 中间件配置参数
+  * options.appLogLevel: 日志级别 'debug', (暂不启用)
+  * options.dir: 日志文件夹 'logs',
+  * options.env: 环境 'development',
+  * options.projectName: 项目名 'koa-admin',
+  * options.serverIp: 服务器ip '0.0.0.0'
+  */
+  const opts = Object.assign({}, baseInfo, options || {})
+  const {env, dir, serverIp, projectName} = opts
+  const commonInfo = { projectName, serverIp }
   log4js.configure({
     appenders: {
-      console:{
+      console: {
         type: 'console'
-      },  
-      web: {
-        type: 'dateFile', // 日志类型
-        filename: 'logs/web', // 输出的文件名
-        pattern: '-yyyy-MM-dd.log', // 文件名增加后缀
-        alwaysIncludePattern: true // 是否总是有后缀名
       },
       api: {
-        type: 'DateFile',
-        filename: 'logs/api',
-        pattern: '-yyyy-MM-dd.log',
-        alwaysIncludePattern: true,
-        layout:{type: 'pattern', pattern: '[%d{yyyy-MM-dd hh:mm:ss} %5.5p] %m'}
+        type: 'DateFile', // 日志类型
+        filename: `${dir}/api`, // 输出的文件名
+        pattern: '-yyyy-MM-dd.log', // 文件名增加后缀
+        alwaysIncludePattern: true, // 是否总是有后缀名
+        layout: {type: 'pattern', pattern: '[%d{yyyy-MM-dd hh:mm:ss} %5.5p] %m'}
       },
       db: {
         type: 'DateFile',
-        filename: 'logs/db',
+        filename: `${dir}/db`,
         pattern: '-yyyy-MM-dd.log',
         alwaysIncludePattern: true,
-        layout:{type: 'pattern', pattern: '[%d{yyyy-MM-dd hh:mm:ss} %5.5p] %m'}
-      }    
+        layout: {type: 'pattern', pattern: '[%d{yyyy-MM-dd hh:mm:ss} %5.5p] %m'}
+      }
     },
-    categories: { 
-      default: { 
-        appenders: ['web'], 
-        level: 'info' 
+    categories: {
+      default: {
+        appenders: ['api'],
+        level: 'info'
       },
-      api:{
-        appenders: ['console', 'api'],
+      api: {
+        appenders: env === 'development' ? ['console', 'api'] : ['api'],
         level: 'trace'
       },
-      db:{
-        appenders: ['console', 'db'],
+      db: {
+        appenders: env === 'development' ? ['console', 'db'] : ['db'],
         level: 'info'
-      }  
+      }
     }
   })
-  
+
   // api logger
-  const logger = log4js.getLogger('api')  
+  const logger = log4js.getLogger('api')
   const contextLogger = {}
   // 数据库logger
   const logger_db = log4js.getLogger('db')
@@ -64,7 +71,7 @@ module.exports = (options) => {
       logger_db[method](message)
     }
   })
- 
+
   return async (ctx, next) => {
     const start = Date.now()
     // 将contextLogger挂在到context上
@@ -82,7 +89,7 @@ module.exports = (options) => {
     }
     const end = Date.now()
     const responseTime = end - start;
-    logger.info(access(ctx, `响应时间${responseTime}ms`, {}))
+    logger.info(access(ctx, `responseTime ${responseTime}ms`, commonInfo))
   }
 }
 

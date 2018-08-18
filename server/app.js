@@ -4,19 +4,18 @@ const views = require('koa-views')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
-// const logger = require('koa-logger')
 const path = require('path')
 
-// 路由和服务
+// 中间件和插件
 const logger = require('./app/middlewares/logger')
 const mongodb = require('./app/plugins/mongodb')
 const errorHandler = require('./app/middlewares/errorHandler')
+// 路由
 const index = require('./app/routes/index')
 const users = require('./app/routes/users')
 const auth = require('./app/routes/auth')
 
-// const accessLogger = require('./app/middlewares/accessLogger.js')
-// const config = require('./app/config/index.js')(app)
+const config = require('./app/config/index.js')(app)
 // console.log('config info', config)
 
 // error handler
@@ -28,9 +27,8 @@ app.use(bodyparser({
   enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
-// app.use(logger())
 // 自定义logger
-app.use(logger())
+app.use(logger(config.middleware.logger))
 
 app.use(require('koa-static')(path.join(__dirname, '/app/public')))
 app.use(views(path.join(__dirname, '/app/views'), {
