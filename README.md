@@ -76,3 +76,5 @@ $ ./node_modules/.bin/eslint --init
   - koa-router支持中间件串联，因此可以通过加入jwt中间件来控制路由访问权限，达到鉴权的目的，具有很好的插拔扩展性
 2. 封装日志
 	- 基于log4js进行日志中间件设计，参考https://cloud.tencent.com/developer/article/1079645
+	- 根据日志功能进行区分，如api和db的日志，分别录入相应的日期文件
+	- 开发环境日志存放在项目根目录下的logs，生产环境日志存放在服务器根目录的某个文件下的logs

@@ -25,6 +25,8 @@ module.exports = (appInfo) => {
   default:
     config = Object.assign(CONFIG_DEFAULT)
   }
+  // 将config挂载到app上
+  appInfo.config = config
   return config
 }
 
