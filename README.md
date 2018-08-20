@@ -26,7 +26,8 @@ $ pm2 start ./index.js
 ```
 
 ## 项目记录
-1. 后端服务 server
+### 后端服务server
+1. 项目构建流程
 ```
 // 安装koa脚手架，支持koa和koa2
 $ npm install -g koa-generator
@@ -69,6 +70,18 @@ $ ./node_modules/.bin/eslint --init
 	}
 }
 
+```
+### admin前端
+1. 项目构建流程
+```
+// 安装vue-cli 3.0
+$ npm install -g @vue/cli
+// 初始化项目
+$ vue create admin // admin 项目名
+// 开发
+$ npm run dev
+// build
+$ npm run build
 ```
 
 ## 心得
