@@ -15,6 +15,22 @@ module.exports = {
   // compiler: false,
   // webpack配置
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
+  // 多页面配置
+  pages: {
+    index: {
+      // entry for the page
+      entry: 'src/main.js',
+      // the source template
+      template: 'public/index.html',
+      // output as dist/index.html
+      filename: 'index.html'
+    },
+    // shareback: {
+    //   entry: 'src/shareback.js',
+    //   template: 'public/shareback.html',
+    //   filename: 'shareback.html'
+    // },
+  },
   chainWebpack: config => {
     config.module
       .rule('vue')
@@ -59,7 +75,7 @@ module.exports = {
   devServer: {
     open: process.platform === 'darwin',
     host: '0.0.0.0',
-    port: 8081,
+    port: 8080,
     https: false,
     hotOnly: false,
     proxy: null, // 设置代理
