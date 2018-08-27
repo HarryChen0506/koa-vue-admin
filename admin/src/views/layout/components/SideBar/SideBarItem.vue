@@ -10,7 +10,7 @@
     
     <el-submenu v-else :index="resolvePath(item.path)">
       <template slot="title">
-        <i class="el-icon-location"></i>
+        <i :class="item.meta && item.meta.icon"></i>
         <span slot="title">{{item.name}}</span>
       </template>
        <template v-for="child in item.children">
@@ -23,7 +23,7 @@
           class="nest-menu"/>
         <router-link v-else :to="resolvePath(child.path)" :key="child.name">
           <el-menu-item :index="resolvePath(child.path)">
-            <i class="el-icon-menu"></i>
+            <i :class="child.meta && child.meta.icon"></i>
             <span slot="title">{{ child.name }}</span>
           </el-menu-item>
         </router-link>

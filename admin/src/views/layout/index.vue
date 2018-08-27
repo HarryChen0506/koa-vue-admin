@@ -1,8 +1,8 @@
 <template>
   <div :class="classObj" class="app-wrapper">    
-    <side-bar class="sidebar-container"/>
+    <sidebar class="sidebar-container"/>
     <div class="main-container">
-      <!-- <navbar/> -->
+      <navbar/>
       <app-main/>
     </div>
   </div>
@@ -10,14 +10,15 @@
 
 <script>
 // import { Navbar, Sidebar, AppMain } from './components'
-import SideBar from './components/SideBar'
+import Sidebar from './components/Sidebar'
+import Navbar from './components/Navbar'
 import AppMain from './components/AppMain'
 
 export default {
   name: 'Layout',
   components: {
-    // Navbar,
-    SideBar,
+    Navbar,
+    Sidebar,
     AppMain
   },
   data () {
