@@ -3,7 +3,7 @@
     <side-bar class="sidebar-container"/>
     <div class="main-container">
       <!-- <navbar/> -->
-      <app-main/> 
+      <app-main/>
     </div>
   </div>
 </template>
