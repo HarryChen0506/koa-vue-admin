@@ -16,6 +16,7 @@ admin/node_modules/
 
 # server 后端
 server/logs/*
+server/assets/*
 
 # admin 管理后台前端
 admin/dist/

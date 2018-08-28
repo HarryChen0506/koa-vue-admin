@@ -7,6 +7,7 @@ exports.index = async (ctx, next) => {
 }
 exports.show = async (ctx, next) => {
   ctx.body = {
+    dir: __dirname,
     params: ctx.params,
     text: 'this is a user response!!!',
     env: process.env.node_env,

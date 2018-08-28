@@ -14,9 +14,12 @@ const errorHandler = require('./app/middlewares/errorHandler')
 const index = require('./app/routes/index')
 const users = require('./app/routes/users')
 const auth = require('./app/routes/auth')
+const upload = require('./app/routes/upload')
 
 const config = require('./app/config/index.js')(app)
 // console.log('app.config', app.config)
+console.log('app.js __dirname', __dirname)
+console.log('assets __dirname', path.join(__dirname, 'assets/images'))
 
 // error handler
 onerror(app)
@@ -42,6 +45,7 @@ mongodb(app)
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(auth.routes(), auth.allowedMethods())
+app.use(upload.routes(), upload.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
