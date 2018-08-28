@@ -18,8 +18,8 @@ const upload = require('./app/routes/upload')
 
 const config = require('./app/config/index.js')(app)
 // console.log('app.config', app.config)
-console.log('app.js __dirname', __dirname)
-console.log('assets __dirname', path.join(__dirname, 'assets/images'))
+// console.log('app.js __dirname', __dirname)
+// console.log('assets __dirname', path.join(__dirname, 'assets/images'))
 
 // error handler
 onerror(app)
@@ -33,7 +33,10 @@ app.use(json())
 // 自定义logger
 app.use(logger(config.middleware.logger))
 
+// 静态资源
 app.use(require('koa-static')(path.join(__dirname, '/app/public')))
+app.use(require('koa-static')(path.join(__dirname, '/assets')))
+
 app.use(views(path.join(__dirname, '/app/views'), {
   extension: 'ejs'
 }))
