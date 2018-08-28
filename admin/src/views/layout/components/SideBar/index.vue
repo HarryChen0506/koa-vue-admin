@@ -16,8 +16,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
-// import SideBarItem from './SideBarItem'
+import { mapGetters } from 'vuex'
 import SidebarItem from './SidebarItem'
 
 export default {
@@ -25,15 +24,14 @@ export default {
     SidebarItem 
   },
   computed: {
-    // ...mapGetters([
-    //   'sidebar'
-    // ]),
+    ...mapGetters([
+      'sidebar'
+    ]),
     routes() {
       return this.$router.options.routes
     },
     isCollapse() {
-      // return !this.sidebar.opened
-      return false
+      return !this.sidebar.opened
     }
   },
   mounted () {

@@ -32,22 +32,20 @@ export default {
     Hamburger
   },
   computed: {
-    // ...mapGetters([
-    //   'sidebar',
-    //   'avatar'
-    // ])
+    ...mapGetters([
+      'sidebar',
+    ])
   },
   data () {
-    return {
-      sidebar: {
-        opened: true
-      }
+    return {     
     }
+  },
+  mounted() {
+    
   },
   methods: {
     toggleSideBar() {
-      // this.$store.dispatch('ToggleSideBar')
-      this.sidebar.opened = !this.sidebar.opened
+      this.$store.dispatch('ToggleSideBar')
     },
     logout() {
       this.$store.dispatch('LogOut').then(() => {

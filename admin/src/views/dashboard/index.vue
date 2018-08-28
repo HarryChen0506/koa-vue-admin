@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="app-container home">
     dashboard
     <el-row :gutter="12">
       <el-col :span="8">
