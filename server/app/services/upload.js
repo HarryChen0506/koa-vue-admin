@@ -3,7 +3,7 @@
 const fs = require('fs')
 const upload = {
   writeFile (fileName, dataBuffer) {
-      // 写入文件
+    // 写入文件
     return new Promise((resolve, reject) => {
       fs.writeFile(fileName, dataBuffer, err => {        
         if (err) {
@@ -14,7 +14,6 @@ const upload = {
         }
       })
     })
-  }   
+  }
 }
 module.exports = upload
-  
