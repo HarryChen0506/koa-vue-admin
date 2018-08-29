@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/views/layout'
 import Dashboard from '@/views/dashboard'
+import Upload from '@/views/upload'
 
 Vue.use(Router)
 
@@ -45,6 +46,20 @@ export default new Router({
           component:  () => import(/* webpackChunkName: "about" */ '@/views/demo/Home.vue')
         }
       ]
-    }   
+    },
+    {
+      path: '/tool',
+      name: 'tool',
+      component: Layout,
+      meta: {title: '工具', icon: 'el-icon-menu'},
+      children: [
+        {
+          path: 'upload',
+          name: 'upload',
+          meta: {title: '上传', icon: 'el-icon-star-on'},
+          component: Upload
+        }
+      ]
+    }
   ]
 })

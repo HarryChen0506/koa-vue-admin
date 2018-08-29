@@ -46,15 +46,19 @@ exports.test = async (ctx, next) => {
   const {data = ''} = ctx.request.body
  
   // 判断文件夹是否存在，不存在则创建
-  const uploadResult = await upload_service.imageUpload({
-    data: data,
-    baseDir: baseDir,
-    imagePath: imagePath,
-    host: ctx.request.header.host
-  })
-  if (uploadResult) {
-    ctx.body = util.handleResult('success', uploadResult)
-  } else {
-    ctx.body = util.handleResult('fail', null, '上传图片失败')
-  }
+  try {
+    const uploadResult = await upload_service.imageUpload({
+      data: data,
+      baseDir: baseDir,
+      imagePath: imagePath,
+      host: ctx.request.header.host
+    })
+    if (uploadResult) {
+      ctx.body = util.handleResult('success', uploadResult)
+    } else {
+      ctx.body = util.handleResult('fail', null, '上传图片失败')
+    }
+  } catch (err) {
+    throw new Error(err)
+  }  
 }

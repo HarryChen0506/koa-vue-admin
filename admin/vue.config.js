@@ -74,11 +74,25 @@ module.exports = {
   // webpack-dev-server 相关配置
   devServer: {
     open: process.platform === 'darwin',
-    host: '0.0.0.0',
-    port: 8080,
-    https: false,
+    // host: '127.0.0.1',
+    // port: 8082,
+    // https: false,
     hotOnly: false,
-    proxy: null, // 设置代理
+    proxy: {
+      "/proxy/": {
+        target: "http://localhost:4000",
+        pathRewrite: {
+            // '^/goods': '/goods'
+            '/proxy': ''
+        },
+        bypass: function(req, res, proxyOptions) {
+          if (req.headers.accept.indexOf("html") !== -1) {
+            console.log("Skipping proxy for browser request.");
+            return "/index.html";
+          }
+        }
+      }
+    }, // 设置代理
     before: app => {}
   },
   // 第三方插件配置
