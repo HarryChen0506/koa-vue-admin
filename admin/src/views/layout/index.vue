@@ -10,7 +10,7 @@
 
 <script>
 // import { Navbar, Sidebar, AppMain } from './components'
-import Sidebar from './components/Sidebar'
+import Sidebar from './components/SidebarOld'
 import Navbar from './components/Navbar'
 import AppMain from './components/AppMain'
 
