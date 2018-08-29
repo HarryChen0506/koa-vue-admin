@@ -5,32 +5,35 @@ const fs_service = require('../services/fs')
 const util = require('../extends/util')
 
 exports.image = async (ctx, next) => {
-  const {data = ''} = ctx.request.body  
+  const baseDir = '../../assets' // upload文件静态资源根目录
+  const imagePath = '/upload/images/' // 文件具体路径
+  const {data = ''} = ctx.request.body
   let suffix = 'png' // 文件后缀
   const base64Data = data.replace(/^data:image\/(\w+);base64,/, (result, $1, offset) => {
     suffix = $1
     return ''
   })
   const dataBuffer = new Buffer(base64Data, 'base64')
-  const filePath = path.resolve(__dirname, '../../assets/upload/images')
+  // filePath 图片存放文件夹
+  const filePath = path.resolve(__dirname, baseDir + imagePath)
   let imageName = util.createImgName() + '.' + suffix
   const fileName = path.join(filePath, imageName)
 
   // 判断文件夹是否存在，不存在则创建
   const mkdirStatus = await fs_service.createDir(filePath)
   if (mkdirStatus) {
-    let result
     try {
-      result = await fs_service.writeFile(fileName, dataBuffer)
-      ctx.body = {
-        result: result
+      const result = await fs_service.writeFile(fileName, dataBuffer)
+      if (result) {
+        ctx.body = util.handleResult('success', {
+          filePath: `${imagePath}${imageName}`,
+          host: ctx.request.header.host
+        })
+      } else {
+        ctx.body = util.handleResult('fail', null, '上传图片失败')
       }
     } catch (err) {
       throw new Error(err)
-    }
-  } else {
-    ctx.body = {
-      result: 'fail'
     }
   }
 }

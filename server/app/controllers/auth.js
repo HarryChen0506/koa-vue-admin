@@ -12,7 +12,7 @@ exports.login = async (ctx, next) => {
     password = request.body.password
   }
   const user = await authService.login({username, password})
-  
+
   if (!user) {
     // log
     ctx.dblog.info(`auth: ${username} login fail`)
