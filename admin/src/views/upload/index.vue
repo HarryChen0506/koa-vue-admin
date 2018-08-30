@@ -9,22 +9,47 @@
 
 <script>
 // @ is an alias to /src
-import axios from 'axios'
+// import axios from '@/services/axios'
+// import util from '@/services/util'
+import request from '@/services/request'
 
 export default {
   name: 'upload',
   components: {
   },
   methods: {
-    upload() {
-			console.log('upload') 
-			axios.get('/proxy/api/users/123')
-				.then(function (response) {
-					console.log(response);
-				})
-				.catch(function (error) {
-					console.log(error);
-				})
+    upload() {       
+      // let path = '/proxy/api/users/:id'
+      // let url = util.formatUrl(path, {
+      //   query: {
+      //     key: 123,
+      //     name: ['hello', 'good']
+      //   },
+      //   params: {
+      //     id: '1234'
+      //   }
+      // })
+      // console.log('upload', url)
+			// axios.get(url)
+      // .then(function (response) {
+      //   console.log(response);
+      // })
+      // .catch(function (error) {
+      //   console.log(error);
+      // })
+      console.log('request', request)
+      const option = {
+        query: {
+          key: 123,
+          name: ['hello', 'good']
+        },
+        params: {
+          id: '1234'
+        }
+      }
+      request.user.info(option).then(res => {
+        console.log('res', res)
+      })
     }
   }
 }
