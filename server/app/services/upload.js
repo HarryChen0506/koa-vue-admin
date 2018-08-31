@@ -10,7 +10,7 @@ const upload = {
    * options.data 图片base64数据
    * options.baseDir 静态资源文件夹
    * options.imagePath 图片保存的文件路径
-   * options.host 
+   * options.host
    */
   async imageUpload (options) {
     // 写入文件

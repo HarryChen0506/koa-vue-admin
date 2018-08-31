@@ -5,18 +5,24 @@
         接口测试<i class="el-icon-upload el-icon--right"></i>
     </el-button>
     <div style="margin-top: 20px">
-      上传
+      上传图片
       <image-upload fileLoadId="image_upload_1" @output-image="getImage"></image-upload>
       <div style="">
         <img width=200 v-if="imageUrl" :src="imageUrl" alt="">
       </div>      
     </div>
+    <div>
+      上传文件      
+      <input id="file" type="file" name="file" value="" multiple="multiple" />          
+      <button @click="uploadFile">提交</button>
+    </div>
+
   </div>  
 </template>
 
 <script>
 // @ is an alias to /src
-// import axios from '@/services/axios'
+import axios from '@/services/axios'
 // import util from '@/services/util'
 import request from '@/services/request'
 import ImageUpload from '@/components/ImageUpload'
@@ -68,6 +74,28 @@ export default {
     getImage (data) {
       console.log('data', data)
       this.imageUrl = data.pictureUrl
+    },
+    uploadFile () {
+      console.log('upload file')
+      var files = document.getElementById("file").files;
+      console.log('files', files)
+      var formData=new FormData();
+      formData.append('file',files[0]);
+      
+      let url = '/proxy/api/upload/file'
+      axios({
+          method: 'post',
+          url: url,
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          },
+          data: formData
+      }).then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
     }
   }
 }
