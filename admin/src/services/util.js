@@ -47,7 +47,10 @@ export default util
  * @return {string} 新的路径
  */
 function formatParamsUrl (path = '', params = {}) {
-	const pattern = /\/(:[^\/\?]+)/g;
+  // 需要转义的字符有：\ . * ^ & [ ] { } ? 等
+  // 注意的是如果在[]字符集合里，很多字符都不需要转义
+	// const pattern = /\/(:[^\/\?]+)/g;
+	const pattern = /\/(:[^/?]+)/g;
 	path = path.replace(pattern, function(result, $1) {
 		return params[$1.slice(1)] ? `/${params[$1.slice(1)]}` : `/${$1}`;
 	});
