@@ -17,7 +17,7 @@ const upload = {
     return new Promise(async (resolve, reject) => {
       const baseDir = options.baseDir || '../public'
       const imagePath = options.imagePath || '/upload/images/'
-      const host = options.host || '127.0.0.1'
+      const host = options.host || '127.0.0.1:80'
       let suffix = 'png' // 文件后缀
       const base64Data = options.data.replace(/^data:image\/(\w+);base64,/, (result, $1, offset) => {
         suffix = $1
@@ -34,10 +34,12 @@ const upload = {
       if (mkdirStatus) {
         try {
           const result = await fs_service.writeFile(fileName, dataBuffer)
-          if (result) {            
+          if (result) {
             resolve({
               filePath: `${imagePath}${imageName}`,
-              host: host
+              host: host,
+              protocol: 'http',
+              url: `http://${host}${imagePath}${imageName}`
             })
           } else {
             resolve(false)

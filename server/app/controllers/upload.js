@@ -5,7 +5,7 @@ const fs_service = require('../services/fs')
 const upload_service = require('../services/upload')
 const util = require('../extends/util')
 
-exports.image = async (ctx, next) => {
+exports.test = async (ctx, next) => {
   const baseDir = '../../assets' // upload文件静态资源根目录
   const imagePath = '/upload/images/' // 文件具体路径
   const {data = ''} = ctx.request.body
@@ -26,9 +26,10 @@ exports.image = async (ctx, next) => {
     try {
       const result = await fs_service.writeFile(fileName, dataBuffer)
       if (result) {
+        console.log('host', ctx.request.header)
         ctx.body = util.handleResult('success', {
           filePath: `${imagePath}${imageName}`,
-          host: ctx.request.header.host
+          host: ctx.request.header['host']
         })
       } else {
         ctx.body = util.handleResult('fail', null, '上传图片失败')
@@ -40,11 +41,11 @@ exports.image = async (ctx, next) => {
 }
 
 // 测试
-exports.test = async (ctx, next) => {
+exports.image = async (ctx, next) => {
   const baseDir = '../../assets' // upload文件静态资源根目录
   const imagePath = '/upload/images/' // 文件具体路径
   const {data = ''} = ctx.request.body
- 
+
   // 判断文件夹是否存在，不存在则创建
   try {
     const uploadResult = await upload_service.imageUpload({
@@ -60,5 +61,5 @@ exports.test = async (ctx, next) => {
     }
   } catch (err) {
     throw new Error(err)
-  }  
+  }
 }
