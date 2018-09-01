@@ -7,14 +7,18 @@
     <div style="margin-top: 20px">
       上传图片
       <image-upload fileLoadId="image_upload_1" @output-image="getImage"></image-upload>
-      <div style="">
+      <div style="margin-top: 10px">
         <img width=200 v-if="imageUrl" :src="imageUrl" alt="">
       </div>      
     </div>
-    <div>
+    <!-- <div>
       上传文件      
       <input id="file" type="file" name="file" value="" multiple="multiple" />          
       <button @click="uploadFile">提交</button>
+    </div> -->
+    <div style="margin-top: 20px">
+      上传文件
+      <file-upload fileLoadId="file_upload_1" @output-file="getFile"></file-upload>
     </div>
 
   </div>  
@@ -26,11 +30,13 @@ import axios from '@/services/axios'
 // import util from '@/services/util'
 import request from '@/services/request'
 import ImageUpload from '@/components/ImageUpload'
+import FileUpload from '@/components/FileUpload'
 
 export default {
   name: 'upload',
   components: {
-    ImageUpload
+    ImageUpload,
+    FileUpload
   },
   data () {
     return {
@@ -96,6 +102,9 @@ export default {
       .catch(function (error) {
         console.log(error);
       })
+    },
+    getFile (data) {
+      console.log('data', data)
     }
   }
 }
