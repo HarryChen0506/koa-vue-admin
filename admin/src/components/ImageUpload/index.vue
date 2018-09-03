@@ -40,7 +40,7 @@
 <script>
   // 图片上传组件
   import axios from '@/services/axios'
-  import util from '@/services/util'
+  import util from '@/utils/util'
   // import {convertBase64UrlToBlob} from '~/plugins/compressImg'
   export default {
     name: 'imageUpload',

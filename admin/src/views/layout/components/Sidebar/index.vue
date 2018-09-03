@@ -10,7 +10,7 @@
       active-text-color="#409EFF"
     >      
       <!-- <side-bar-item v-for="route in routes" :key="route.name" :item="route" :base-path="route.path"/> -->
-      <sidebar-item v-for="route in routes" :key="route.name" :item="route" :base-path="route.path" />
+      <sidebar-item v-for="route in routes" :key="route.name" :item="route" :base-path="route.path" v-if="!route.hidden"/>
     </el-menu>
   </el-scrollbar>
 </template>

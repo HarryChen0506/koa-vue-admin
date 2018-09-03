@@ -1,6 +1,6 @@
 // 业务请求服务
 import http from './http'
-import util from './util'
+import util from '@/utils/util'
 
 const user = {
 	info: function(option = {}){			

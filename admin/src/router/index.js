@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Layout from '@/views/layout'
 import Dashboard from '@/views/dashboard'
 import Upload from '@/views/upload'
+import Login from '@/views/login'
 
 Vue.use(Router)
 
@@ -26,7 +27,14 @@ export default new Router({
         meta: {title: '关于', icon: 'el-icon-star-on'},              
         component: () => import(/* webpackChunkName: "about" */ '@/views/demo/About.vue')
       }]
-    }, 
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+      meta: {title: '登录', icon: 'el-icon-menu'},
+      hidden: true
+    },
     {
       path: '/demo',
       name: 'demo',
@@ -36,7 +44,7 @@ export default new Router({
         {
           path: 'about',
           name: 'demo-about',
-          meta: {title: '新关于', icon: 'el-icon-star-on'},
+          meta: {title: '新关于', icon: 'el-icon-star-on'},         
           component:  () => import(/* webpackChunkName: "about" */ '@/views/demo/About.vue')
         },
         {

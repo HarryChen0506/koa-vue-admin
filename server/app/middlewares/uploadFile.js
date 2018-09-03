@@ -82,9 +82,11 @@ function getUploadFileExt (name) {
 // 根据日期生成文件夹
 function getUploadDirName () {
   const date = new Date();
-  let month = Number.parseInt(date.getMonth()) + 1;
-  month = month.toString().length > 1 ? month : `0${month}`;
-  const dir = `${date.getFullYear()}${month}${date.getDate()}`;
+  let month = Number.parseInt(date.getMonth()) + 1
+  month = month.toString().length > 1 ? month : `0${month}`
+  let day = Number.parseInt(date.getDate())
+  day = day.toString().length > 1 ? day : `0${day}`
+  const dir = `${date.getFullYear()}${month}${day}`
   return dir
 }
 // 获取生成的文件名
@@ -95,9 +97,9 @@ function getUploadFileName (ext) {
 
 // 检查文件夹是否存在
 function checkDirExist (p) {
-  const path = require('path');
-  const fs = require('fs');
+  // const path = require('path')
+  const fs = require('fs')
   if (!fs.existsSync(p)) {
-    fs.mkdirSync(p);
+    fs.mkdirSync(p)
   }
 }
