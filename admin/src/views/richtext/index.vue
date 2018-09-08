@@ -11,8 +11,11 @@
         getText
     </el-button>
     <div class="editor-wrap">
-      <wang-editor ref="demoEditor"/>
-    </div>   
+      <wang-editor ref="demoEditor" v-model="demo" :config="{uploadImgShowBase64: true}" @change="changeContent"/>
+    </div>
+    <div style="margin-top: 20px">
+      html: {{demo}}
+    </div> 
 
   </div>  
 </template>
@@ -36,7 +39,7 @@ export default {
   },
   data () {
     return {
-      
+      demo: '<h1>Hello</h1>'
     }
   },
   methods: {
@@ -45,12 +48,15 @@ export default {
 		},
 		getHtml () {
 			const reuslt = this.$refs.demoEditor.getHtml()
-			console.log('result', reuslt)
+			console.log('getHtml', reuslt)
 		},
 		getText () {
 			const reuslt = this.$refs.demoEditor.getText()
-			console.log('result', reuslt)
-		}
+			console.log('getText', reuslt)
+    },
+    changeContent (content) {
+      console.log('change content', content)
+    }
   }
 }
 </script>
