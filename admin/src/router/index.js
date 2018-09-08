@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Login from '@/views/login'
 import Layout from '@/views/layout'
 import Dashboard from '@/views/dashboard'
 import Upload from '@/views/upload'
-import Login from '@/views/login'
+import Richtext from '@/views/richtext'
+
 
 Vue.use(Router)
 
@@ -39,7 +41,7 @@ export default new Router({
       path: '/demo',
       name: 'demo',
       component: Layout,
-      meta: {title: '案例', icon: 'el-icon-menu'},
+      meta: {title: '案例', icon: 'icon-suitcase'},
       children: [
         {
           path: 'about',
@@ -59,13 +61,18 @@ export default new Router({
       path: '/tool',
       name: 'tool',
       component: Layout,
-      meta: {title: '工具', icon: 'el-icon-menu'},
+      meta: {title: '工具', icon: 'icon-wrench'},
       children: [
         {
           path: 'upload',
           name: 'upload',
-          meta: {title: '上传', icon: 'el-icon-star-on'},
+          meta: {title: '上传', icon: 'icon-cloud-upload'},
           component: Upload
+        }, {
+          path: 'richtext',
+          name: 'richtext',
+          meta: {title: '富文本', icon: 'icon-underline'},
+          component: Richtext
         }
       ]
     }

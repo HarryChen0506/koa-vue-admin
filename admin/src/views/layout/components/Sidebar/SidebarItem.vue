@@ -11,7 +11,7 @@
     <el-submenu v-else :index="resolvePath(item.path)">
       <template slot="title">
         <i :class="item.meta && item.meta.icon"></i>
-        <span slot="title">{{item.name}}</span>
+        <span slot="title">{{item.meta.title}}</span>
       </template>
        <template v-for="child in item.children" v-if="!child.hidden">
         <sidebar-item
@@ -24,7 +24,7 @@
         <router-link v-else :to="resolvePath(child.path)" :key="child.name">
           <el-menu-item :index="resolvePath(child.path)">
             <i :class="child.meta && child.meta.icon"></i>
-            <span slot="title">{{ child.name }}</span>
+            <span slot="title">{{ child.meta.title }}</span>
           </el-menu-item>
         </router-link>
       </template>             
