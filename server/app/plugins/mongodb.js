@@ -3,7 +3,7 @@
 
 const mongoose = require('mongoose')
 // const config = require('../config/index.js')()
-module.exports = (appInfo) => {
+module.exports = (appInfo) => {  
   const {config} = appInfo
   const {dbUrl} = config.plugin.mongodb
   // 链接数据库

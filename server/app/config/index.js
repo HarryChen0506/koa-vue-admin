@@ -7,8 +7,8 @@ const configList = [
   'plugin',
   'middleware'
 ]
-module.exports = (appInfo) => {
-  appInfo = appInfo || app
+module.exports = (appInfo) => {  
+  appInfo = appInfo || app  
   const NODE_ENV = nodeEnv()
   const CONFIG_DEFAULT = require('./config.default')(appInfo)
   const CONFIG_LOCAL = require('./config.local')(appInfo)

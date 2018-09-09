@@ -16,13 +16,22 @@ const auth = {
     }, secret)
     return token
   },
-  async login ({ username, password }) {
-    return UserModel.findOne({username, password}).exec()
+  async login ({username, password}) {
+    if (!username || !password) {
+      return null
+    }
+    return UserModel.findOne({username, password}).exec()   
   },
   async getUserByUsername (username) {
+    if (!username) {
+      return null
+    }
     return UserModel.findOne({username}).exec()
   },
   async createUser ({username, password}) {
+    if (!username || !password) {
+      return null
+    }
     const user = new UserModel({
       username,
       password

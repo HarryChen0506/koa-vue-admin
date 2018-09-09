@@ -12,7 +12,7 @@ exports.login = async (ctx, next) => {
     password = request.body.password
   }
   const user = await authService.login({username, password})
-
+  console.log('user', user)
   if (!user) {
     // log
     ctx.dblog.info(`auth: ${username} login fail`)
@@ -37,7 +37,16 @@ exports.register = async (ctx, next) => {
   // const { query, params } = ctx
   const {username, password} = ctx.request.body
   // 如果参数校验未通过，将会抛出一个 status = 422 的异常
-  // ctx.validate(createRule, { userName, password })
+  try {
+     ctx.validate({
+      username: 'string',
+      password: 'string'
+     }, { username, password })
+  } catch (err) {
+    ctx.body = util.handleResult('fail', null, err)
+    return
+  }
+
   const user = await authService.getUserByUsername(username)
   if (user) {
     // 有重名用户
