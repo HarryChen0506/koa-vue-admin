@@ -1,6 +1,7 @@
 // auth controller
 const authService = require('../services/auth')
 const util = require('../extends/util')
+
 exports.login = async (ctx, next) => {
   const { query, params, request } = ctx
   let username, password
@@ -10,6 +11,15 @@ exports.login = async (ctx, next) => {
   } else if (request.method === 'POST') {
     username = request.body.username
     password = request.body.password
+  }
+  try {
+    ctx.validate({
+      username: 'string',
+      password: 'string'
+    }, { username, password })
+  } catch (err) {
+    ctx.body = util.handleResult('fail', null, err)
+    return
   }
   const user = await authService.login({username, password})
   console.log('user', user)
@@ -33,6 +43,7 @@ exports.login = async (ctx, next) => {
     accessToken: token
   })
 }
+
 exports.register = async (ctx, next) => {
   // const { query, params } = ctx
   const {username, password} = ctx.request.body

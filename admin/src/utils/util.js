@@ -1,6 +1,40 @@
 // 工具函数
 'use strict'
-
+const LocalStorage = {
+  save: function (key, value) {
+    return localStorage.setItem(key, value)    
+  },
+  get: function (key) {
+    return localStorage.getItem(key)
+  },
+  remove: function (key) {
+    return localStorage.removeItem(key)
+  }
+}
+const Cookie = {
+  set: function setCookie (c_name, value, expiredays) {
+    var exdate=new Date()
+    exdate.setDate(exdate.getDate() + expiredays)
+    document.cookie = c_name+ "=" + escape(value) + ((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+  },
+  get: function getCookie (name) {
+    var arr, reg = new RegExp("(^| )"+name+"=([^;]*)(;|$)")
+    arr = document.cookie.match(reg)
+    if ( arr ) {
+      return arr[2]
+    } else {
+      return null
+    }          
+  },
+  delete: function delCookie (name) {
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1);
+    var cval= this.get(name);
+    if( cval!=null ){
+      document.cookie= name + "="+cval+";expires="+exp.toGMTString()
+    }
+  }
+}
 const util = {
   uuid: function () { // 生产uuid
     var s = []
@@ -35,8 +69,8 @@ const util = {
     }
     return url;
   },	
-
-    
+  LocalStorage,
+  Cookie  
 }
 export default util
 

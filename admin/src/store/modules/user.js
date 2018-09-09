@@ -1,4 +1,7 @@
 // user 相关
+import request from '@/services/request'
+import axios from '@/services/axios'
+
 const user = {
   state: {
     name: '',
@@ -23,20 +26,22 @@ const user = {
   },
   actions: {
     // 登录
-    Login({commit}, userInfo) {
+    Login ({commit}, userInfo) {
       // const username = userInfo.username.trim()
-      return new Promise((resolve, reject) => {
-        // login(username, userInfo.password).then(response => {
-        //   const data = response.data
-        //   resolve()
-        // }).catch(error => {
-        //   reject(error)
-        // })
-        setTimeout(() => {
-          commit('SET_NAME', 'hello')
-          resolve()
-        }, 1000)
-      })
+      return new Promise(async (resolve, reject) => {
+        try {
+          const result = await request.user.login({}, userInfo) 
+          const {data} = result
+          if (data.success) {
+            resolve()  
+          } else {
+            reject(data.message)
+          }   
+        } catch (err) {
+          // console.log('reject', err)
+          reject(err)
+        }
+      }) 
     },
     // 注销
     Logout({commit, state}) {

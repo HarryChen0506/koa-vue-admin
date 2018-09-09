@@ -29,30 +29,31 @@ function httpGet(url){
 	return promise   
 }
 //post请求 json
-function httpPost(url,data){
-	let promise = new Promise(function(resolve, reject){
+function httpPost(url, data){
+	let promise = new Promise(function(resolve, reject){		  
 			axios({
-					method: 'post',
-					url: url,
-					data:data
+				method: 'post',
+				url: url,
+				data: data
 			}).then(function(response){
 					resolve(response)
 			}).catch(function(err){
 					reject(err)
 			})
 	})
+	console.log('url', url, data)
 	return promise   
 }
 //post请求 form
 function httpPostForm(url, data){
 	let promise = new Promise(function(resolve, reject){
 		axios({
-				method: 'post',
-				url: url,
-				headers: {
-						'Content-Type': 'multipart/form-data'
-				},
-				data: obj2Form(data)
+			method: 'post',
+			url: url,
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			},
+			data: obj2Form(data)
 		}).then(function(response){
 				resolve(response)
 		}).catch(function(err){
