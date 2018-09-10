@@ -3,6 +3,7 @@
 
 module.exports = () => {
   const config = {}
+  config.accessKey = 'accessToken'
   config.whiteList = ['/login'] // 路由白名单
  
   return config

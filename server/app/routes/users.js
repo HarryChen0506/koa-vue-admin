@@ -7,5 +7,5 @@ const authToken = require('../middlewares/authToken.js')()
 const user = require('../controllers/user')
 
 router.get('/', authToken, user.index)
-router.get('/:id', user.show)
+router.get('/:id', authToken, user.show)
 module.exports = router

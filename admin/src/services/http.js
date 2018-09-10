@@ -9,7 +9,7 @@ import axios from './axios';
 function obj2Form(data){
 	var formData = new FormData();
 	for(var key in data){
-			formData.append(key, data[key]);
+		formData.append(key, data[key]);
 	}
 	return formData
 }
@@ -31,17 +31,16 @@ function httpGet(url){
 //post请求 json
 function httpPost(url, data){
 	let promise = new Promise(function(resolve, reject){		  
-			axios({
-				method: 'post',
-				url: url,
-				data: data
-			}).then(function(response){
-					resolve(response)
-			}).catch(function(err){
-					reject(err)
-			})
+		axios({
+			method: 'post',
+			url: url,
+			data: data
+		}).then(function(response){
+				resolve(response)
+		}).catch(function(err){
+				reject(err)
+		})
 	})
-	console.log('url', url, data)
 	return promise   
 }
 //post请求 form
@@ -55,9 +54,9 @@ function httpPostForm(url, data){
 			},
 			data: obj2Form(data)
 		}).then(function(response){
-				resolve(response)
+			resolve(response)
 		}).catch(function(err){
-				reject(err)
+			reject(err)
 		})
 	})
 	return promise   

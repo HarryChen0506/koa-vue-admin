@@ -1,6 +1,7 @@
 // user 相关
 import request from '@/services/request'
-import axios from '@/services/axios'
+import util from '@/utils/util'
+import config from '@/config'
 
 const user = {
   state: {
@@ -33,7 +34,12 @@ const user = {
           const result = await request.user.login({}, userInfo) 
           const {data} = result
           if (data.success) {
-            resolve()  
+            const {username, accessToken} = data.result
+            const {accessKey = 'accessToken'} = config()
+            console.log(username)
+            commit('SET_NAME', username)
+            util.LocalStorage.save(accessKey, accessToken)
+            resolve()
           } else {
             reject(data.message)
           }   
@@ -44,12 +50,11 @@ const user = {
       }) 
     },
     // 注销
-    Logout({commit, state}) {
-      return new Promise((resolve, reject) => {        
-        setTimeout(() => {
-          commit('SET_USER_NULL')
-          resolve()
-        }, 1000)
+    Logout({commit}) {
+      return new Promise((resolve) => {        
+        commit('SET_USER_NULL')
+        util.LocalStorage.remove('accessToken')
+        resolve()
       })
     }    
   }

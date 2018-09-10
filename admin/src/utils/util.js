@@ -1,5 +1,7 @@
 // 工具函数
 'use strict'
+import { Base64 } from 'js-base64'
+
 const LocalStorage = {
   save: function (key, value) {
     return localStorage.setItem(key, value)    
@@ -70,7 +72,15 @@ const util = {
     return url;
   },	
   LocalStorage,
-  Cookie  
+  Cookie,
+  parseToken: function (token) {
+    const result = token.split('.')
+    const infoDecodedStr = Base64.decode(result[0])
+    const payloadDecodedStr = Base64.decode(result[1])
+    const info = JSON.parse(infoDecodedStr)
+    const payload = JSON.parse(payloadDecodedStr)
+    return {info, payload}
+  }
 }
 export default util
 

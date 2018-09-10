@@ -11,6 +11,7 @@ const {whiteList = []} = config()
 router.beforeEach((to, from, next) => {
 	NProgress.start()
   // console.log('white', whiteList)
+  
   next()
 })
 

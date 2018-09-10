@@ -1,7 +1,6 @@
 // 业务请求服务
 import http from './http'
 import util from '@/utils/util'
-import axios from '@/services/axios';
 const user = {
 	info: function (option = {}) {			
 		const path = '/proxy/api/users/:id'
