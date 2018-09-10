@@ -20,6 +20,7 @@ const user = {
       state.roles = roles
     },
     SET_USER_NULL: (state) => {
+      console.log('SET_USER_NULL')
       state.name = ''
       state.avatar = ''
       state.roles = []
@@ -53,7 +54,7 @@ const user = {
     Logout({commit}) {
       return new Promise((resolve) => {        
         commit('SET_USER_NULL')
-        util.LocalStorage.remove('accessToken')
+        util.LocalStorage.remove('accessToken')        
         resolve()
       })
     }    

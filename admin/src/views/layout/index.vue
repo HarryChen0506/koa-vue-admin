@@ -10,9 +10,13 @@
 
 <script>
 // import { Navbar, Sidebar, AppMain } from './components'
+import config from '@/config'
+import util from '@/utils/util'
+import request from '@/services/request'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
 import AppMain from './components/AppMain'
+const {accessKey = 'accessToken'} = config()
 
 export default {
   name: 'Layout',
@@ -37,8 +41,26 @@ export default {
       }
     }
   },
+  mounted() {
+    console.log('layout mounted')
+    this.getUserInfo()
+  },
   methods: {
-    
+    getUserInfo () {
+      const token = util.LocalStorage.get(accessKey)
+      if (token) {
+        const {payload = {}} = util.parseToken(token)
+        const id = payload.id
+        request.user.getUserById(id).then(res => {
+          if (res.data.success) {
+            const {username} = res.data.result
+            this.$store.commit('SET_NAME', username)
+          }          
+        })
+      } else {
+        console.log('123')
+      }      
+    }
   }
 }
 </script>

@@ -1,23 +1,25 @@
 <template>
   <el-menu class="navbar" mode="horizontal">
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
-    <breadcrumb />
+    <breadcrumb />    
+    <span class="username-container">{{username}}</span>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
         <img src="@/assets/images/avatar.jpg" class="user-avatar">
         <i class="el-icon-caret-bottom"/>
-      </div>
+      </div>      
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
         <router-link class="inlineBlock" to="/">
           <el-dropdown-item>
             首页
           </el-dropdown-item>
         </router-link>
-        <el-dropdown-item divided>
-          <span style="display:block;" @click="logout">注销</span>
+        <el-dropdown-item>
+          <span style="display:inline-block;width: 100%" @click="logout">注销</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    
   </el-menu>
 </template>
 
@@ -34,15 +36,17 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-    ])
+    ]),
+    username () {
+      return this.$store.state.user.name
+    }
   },
   data () {
     return {   
-      avatar: '@/assets/images/avatar.jpg'  
+      avatar: '@/assets/images/avatar.jpg'      
     }
   },
   mounted() {
-    
   },
   methods: {
     toggleSideBar() {
@@ -51,6 +55,7 @@ export default {
     logout() {
       console.log('logout')
       this.$store.dispatch('Logout').then(() => {
+        // console.log('path logout')
         this.$router.push({ path: '/login' })
         // location.reload() // 为了重新实例化vue-router对象 避免bug
       })
@@ -77,11 +82,15 @@ export default {
     top: 16px;
     color: red;
   }
+  .username-container {
+    position: absolute;
+    right: 90px;
+  }
   .avatar-container {
     height: 50px;
     display: inline-block;
     position: absolute;
-    right: 35px;
+    right: 35px;    
     .avatar-wrapper {
       cursor: pointer;
       margin-top: 5px;

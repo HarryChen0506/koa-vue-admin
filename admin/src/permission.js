@@ -8,11 +8,11 @@ import util from '@/utils/util'
 import config from '@/config'
 const {accessKey = 'accessToken'} = config()
 const {whiteList = []} = config()
-const token = util.LocalStorage.get(accessKey)
 
 router.beforeEach((to, from, next) => {
 	NProgress.start()
   // console.log('white', whiteList)
+  const token = util.LocalStorage.get(accessKey)
   if (token) {
     // token生成
     if (to.path === '/login') {
@@ -24,7 +24,7 @@ router.beforeEach((to, from, next) => {
   } else {
     // 未生成token
     if (whiteList.indexOf(to.path) !== -1) {
-      // console.log('白名单')
+      console.log('白名单', to.path)
       next()
     } else  {
       next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页

@@ -63,7 +63,6 @@ export default {
       // .catch(function (error) {
       //   console.log(error);
       // })
-      console.log('request', request)
       const option = {
         query: {
           key: 123,
@@ -78,7 +77,7 @@ export default {
       })
     },
     getImage (data) {
-      console.log('data', data)
+      // console.log('data', data)
       this.imageUrl = data.pictureUrl
     },
     uploadFile () {

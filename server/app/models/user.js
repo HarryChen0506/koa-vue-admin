@@ -1,6 +1,7 @@
 'use strict'
 // user model
 const mongoose = require('mongoose')
+let userModel = null
 
 module.exports = (app) => {
   const Schema = mongoose.Schema
@@ -25,5 +26,6 @@ module.exports = (app) => {
   // 如果名称的最后一个字符是数字，则不变；
   // 如果模型名称为"MyModel"，则集合名称为"mymodels"；
   // 如果模型名称为"Model1"，则集合名称为"model1"
-  return mongoose.model('User', UserSchema, 'users')
+  userModel = userModel ||  mongoose.model('User', UserSchema, 'users')
+  return userModel
 }
