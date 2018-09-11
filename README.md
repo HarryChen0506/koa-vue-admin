@@ -83,7 +83,7 @@ $ npm run dev
 // build
 $ npm run build
 ```
-```
+
 2. vue-cli 配置
 
 ```
