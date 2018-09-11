@@ -58,6 +58,20 @@ export default new Router({
       ]
     },
     {
+      path: '/user',
+      name: 'user',
+      component: Layout,
+      meta: {title: '用户', icon: 'icon-group'},
+      children: [
+        {
+          path: 'list',
+          name: 'user-list',
+          meta: {title: '列表', icon: 'icon-table'},
+          component:  () => import(/* webpackChunkName: "about" */ '@/views/user/list.vue')
+        }        
+      ]
+    },
+    {
       path: '/tool',
       name: 'tool',
       component: Layout,
