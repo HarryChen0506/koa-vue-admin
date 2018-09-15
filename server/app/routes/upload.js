@@ -14,4 +14,5 @@ const upload = require('../controllers/upload')
 router.post('/image', upload.image)
 router.post('/test', upload.test)
 router.post('/file', beforeUpload(), uploadFile(), uploadResult())
+router.post('/ossSign', upload.ossSign)
 module.exports = router

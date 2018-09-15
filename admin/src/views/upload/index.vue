@@ -4,6 +4,9 @@
     <el-button type="primary" @click="upload">
         接口测试<i class="el-icon-upload el-icon--right"></i>
     </el-button>
+    <el-button type="primary" @click="ossSign">
+        oss sign<i class="el-icon-upload el-icon--right"></i>
+    </el-button>
     <div style="margin-top: 20px">
       上传图片
       <image-upload fileLoadId="image_upload_1" @output-image="getImage"></image-upload>
@@ -20,13 +23,18 @@
       上传文件
       <file-upload fileLoadId="file_upload_1" @output-file="getFile"></file-upload>
     </div>
+    <div style="margin-top: 20px">
+      oss上传
+      <input class="" ref="fileLoadId" type="file" id="fileLoadId" name="fileLoadId" @change="ossUpload">
+    </div>
 
   </div>  
 </template>
 
 <script>
 // @ is an alias to /src
-import axios from '@/services/axios'
+// import axios from '@/services/axios'
+import axios from 'axios'
 // import util from '@/services/util'
 import request from '@/services/request'
 import ImageUpload from '@/components/ImageUpload'
@@ -75,6 +83,45 @@ export default {
       request.user.info(option).then(res => {
         console.log('res', res)
       })
+    },
+    ossSign () {
+      let path = '/proxy/api/upload/ossSign'
+      axios.post(path)
+      .then(function (response) {
+        console.log(response)
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    ossUpload () {
+      const file = this.$refs['fileLoadId'].files[0]
+      console.log('file', file)
+      axios.post(`/proxy/api/upload/ossSign`)
+        .then((res) => {
+          console.log('res', res)
+          const params = res.data.result
+          var formData = new FormData()
+          // var params = res.data.params
+          for (var key in params) {
+            formData.append(key, params[key])
+          }
+          // params.key = res.data.prefix + filename + suffix
+          formData.append('file', file)
+
+          axios({
+            method: 'post',
+            url: params.host,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+            data: formData
+          }).then((data) => {
+            console.log('data', data)
+          })
+
+        })
+
+
     },
     getImage (data) {
       // console.log('data', data)

@@ -63,3 +63,14 @@ exports.image = async (ctx, next) => {
     throw new Error(err)
   }
 }
+
+// 阿里云oss
+exports.ossSign = async (ctx, next) => {
+  // 获取policy
+  try {
+    const result = await upload_service.ossSign()
+    ctx.body = util.handleResult('success', result)
+  } catch (err) {
+    throw new Error(err)
+  }
+}
