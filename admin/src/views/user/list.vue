@@ -56,7 +56,17 @@
 					:formatter="formatDate"
 					label="更新时间">
 				</el-table-column>
-			</el-table>
+			</el-table>			
+		</section>
+		<section class="pagination">
+			<el-pagination
+				background
+				layout="prev, pager, next"
+				@current-change="handleCurrentChange"
+				:current-page.sync="pagination.pageNum"
+				:page-size="pagination.pageSize"
+				:total="pagination.total">
+			</el-pagination>
 		</section>
   </div>  
 </template>
@@ -70,6 +80,11 @@
 		.main {
 			margin-top: 20px;
 			padding: 20px;
+		}
+		.pagination {
+			margin-top: 30px;
+			display: flex;
+			justify-content: flex-end;
 		}
 	}
 </style>
@@ -97,6 +112,11 @@ export default {
 				username: '',
 				id: ''
 			},
+			pagination: {
+				pageSize: 10,
+				pageNum: 1,
+				total: 0
+			},
 			tableData: [
 				// {
 				// 	"_id": "5b2f5831ed590f0394fe7622",
@@ -115,21 +135,27 @@ export default {
   methods: {
 		search () {
 			console.log('search')
+			this.pagination.pageNum = 1
 			this.query()
 		},
 		async query () {
-			const query = this.queryParams
+			const {pageNum, pageSize} = this.pagination
+			const query = {...this.queryParams, pageNum, pageSize}
 			console.log('query', query)
 			try {
         const result = await request.user.getUserByParams({query}) 
 				const {data} = result
 				console.log('data', data)
 				if (data.success) {
-					this.tableData = data.result
+					this.tableData = data.result.list
+					this.pagination.total = data.result.total
 				}
       } catch (err) {
         
       }      
+		},
+		handleCurrentChange () {
+			this.query()
 		},
 		formatDate (row, column, cellValue, index) {
 			return moment(new Date(cellValue)).format('lll')
