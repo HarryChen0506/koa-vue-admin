@@ -2,9 +2,19 @@
 const config = require('../config/index.js')()
 const util = require('../extends/util')
 const userService = require('../services/user')
+
+// 根据条件查询用户
 exports.index = async (ctx, next) => {
-  ctx.body = {
-    text: 'this is a user response!!!'
+  const {query} = ctx
+  console.log('query', query)
+  try {
+    const user = await userService.getUserByParams(query)
+    ctx.dblog.info('auth: user query success')
+    ctx.body = util.handleResult('success', user)
+  } catch (err) {
+    ctx.dblog.info('auth: user is not exist')
+    // 用户校验错误
+    ctx.body = util.handleResult('fail', null, err || '用户不存在')
   }
 }
 exports.show = async (ctx, next) => {

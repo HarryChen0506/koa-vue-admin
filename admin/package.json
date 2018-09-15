@@ -12,6 +12,7 @@
     "axios": "^0.18.0",
     "element-ui": "^2.4.6",
     "js-base64": "^2.4.9",
+    "moment": "^2.22.2",
     "normalize.css": "^8.0.0",
     "nprogress": "^0.2.0",
     "vue": "^2.5.17",

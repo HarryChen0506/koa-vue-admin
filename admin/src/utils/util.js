@@ -53,7 +53,8 @@ const util = {
 	},
 	deepClone: deepClone, // 深拷贝
 	// 生成请求url
-	formatUrl: function (path, options = {}) {
+	formatUrl: function (path, options = {}, mode = 'strict') {
+    // mode ['strict', 'unstrict'] 是否严格模式 当严格模式下，undefined '' null 均不拼接url
     let url;
     const { params = {}, query = {} } = options;
     // 编译params
@@ -64,8 +65,21 @@ const util = {
     // }
     const paramsUrl = formatParamsUrl(path, params);
     // 编译query
-    if (Object.keys(query).length > 0) {
-      url = formatQueryUrl(paramsUrl, query);
+    let filterQuery = {}
+    if (mode === 'strict') {
+      // 严格模式     
+      Object.keys(query).forEach(v => {
+        const value = query[v]
+        if (value !== undefined && value !=='' && value !== null) {
+          filterQuery[v] = value
+        } 
+      })
+    } else {
+      filterQuery = query
+    }
+    // 拼接url
+    if (Object.keys(filterQuery).length > 0) {
+      url = formatQueryUrl(paramsUrl, filterQuery);
     } else {
       url = paramsUrl;
     }

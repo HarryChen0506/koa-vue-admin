@@ -2,25 +2,26 @@
   <div class="page-user">    
     <section class="search">
 			<el-form :inline="true" class="search-form" size="mini">
-				<el-form-item label="作品ID">
+				<el-form-item label="用户ID">
 					<el-input 
-						placeholder="作品ID"
+						placeholder="用户ID"
 						size="mini"
-						v-model.lazy="queryParams.worksId"
+						v-model.lazy="queryParams.id"
 						@blur="search"
 						clearable
 					>
 					</el-input>
 				</el-form-item>
-				<el-form-item label="审批人">
-					<el-input v-model="queryParams.user" placeholder="审批人"></el-input>
-				</el-form-item>
-				<el-form-item label="活动区域">
-					<el-select v-model="queryParams.user" placeholder="活动区域">
-						<el-option label="区域一" value="shanghai"></el-option>
-						<el-option label="区域二" value="beijing"></el-option>
-					</el-select>
-				</el-form-item>
+				<el-form-item label="用户名">
+					<el-input 
+						placeholder="用户名"
+						size="mini"
+						v-model.lazy="queryParams.username"
+						@blur="search"						
+						clearable
+					>
+					</el-input>
+				</el-form-item>				
 				<el-form-item>
 					<el-button type="primary" @click="search">查询</el-button>
 				</el-form-item>
@@ -32,18 +33,28 @@
 				stripe
 				style="width: 100%">
 				<el-table-column
-					prop="date"
-					label="日期"
-					width="180">
+					type="index"
+					label="顺序"
+					width="100">
 				</el-table-column>
 				<el-table-column
-					prop="name"
-					label="姓名"
-					width="180">
+					prop="_id"
+					label="用户Id"
+					width="210">
 				</el-table-column>
 				<el-table-column
-					prop="address"
-					label="地址">
+					prop="username"
+					label="用户名">
+				</el-table-column>
+				<el-table-column
+					prop="create_time"
+					:formatter="formatDate"
+					label="注册时间">
+				</el-table-column>
+				<el-table-column
+					prop="update_time"
+					:formatter="formatDate"
+					label="更新时间">
 				</el-table-column>
 			</el-table>
 		</section>
@@ -61,18 +72,6 @@
 			padding: 20px;
 		}
 	}
-	.shadow {
-		border-width: 1px;
-    border-style: solid;
-    border-color: rgb(235, 235, 235);
-    border-image: initial;
-    border-radius: 3px;
-    transition: all 0.2s ease 0s;
-	}
-	.shadow:hover {
-		box-shadow: rgba(232, 237, 250, 0.6) 0px 0px 8px 0px, rgba(232, 237, 250, 0.5) 0px 2px 4px 0px;
-	}
-  
 </style>
 <style lang="less">
 	.el-form-item__label {
@@ -83,8 +82,10 @@
 <script>
 // @ is an alias to /src
 import axios from '@/services/axios'
+import moment from 'moment'
 // import util from '@/services/util'
 import request from '@/services/request'
+moment.locale('zh-cn')
 
 export default {
   name: 'user',
@@ -97,30 +98,42 @@ export default {
 				id: ''
 			},
 			tableData: [
-				{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-				}
+				// {
+				// 	"_id": "5b2f5831ed590f0394fe7622",
+				// 	"username": "harry",
+				// 	"password": "123",
+				// 	"create_time": "2018-06-24T08:37:05.757Z",
+				// 	"update_time": "2018-06-24T08:37:05.760Z",
+				// 	"__v": 0
+				// }
 			]
     }
-  },
+	},
+	mounted () {
+		this.search()
+	},
   methods: {
 		search () {
 			console.log('search')
-		}    
+			this.query()
+		},
+		async query () {
+			const query = this.queryParams
+			console.log('query', query)
+			try {
+        const result = await request.user.getUserByParams({query}) 
+				const {data} = result
+				console.log('data', data)
+				if (data.success) {
+					this.tableData = data.result
+				}
+      } catch (err) {
+        
+      }      
+		},
+		formatDate (row, column, cellValue, index) {
+			return moment(new Date(cellValue)).format('lll')
+		}
   }
 }
 </script>
