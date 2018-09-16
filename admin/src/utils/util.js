@@ -50,7 +50,29 @@ const util = {
 
     var uuid = s.join('')
     return uuid
-	},
+  },
+  createImgName: function (length = 24) {
+    var s = []
+    var hexDigits = '0123456789abcdef'
+    for (var i = 0; i < length; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
+      if (i % 5 === 4) {
+        s[i] = '-'
+      }
+    }
+    return s.join('')
+  },
+  createFileName: function (length = 24) {
+    var s = []
+    var hexDigits = '0123456789abcdef'
+    for (var i = 0; i < length; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
+      if (i % 5 === 4) {
+        s[i] = '-'
+      }
+    }
+    return s.join('')
+  },
 	deepClone: deepClone, // 深拷贝
 	// 生成请求url
 	formatUrl: function (path, options = {}, mode = 'strict') {

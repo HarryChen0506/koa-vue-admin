@@ -9,7 +9,7 @@
     </el-button>
     <div style="margin-top: 20px">
       上传图片
-      <image-upload fileLoadId="image_upload_1" @output-image="getImage"></image-upload>
+      <image-upload fileLoadId="image_upload_1" @output-image="getImage" :oss="false"></image-upload>
       <div style="margin-top: 10px">
         <img width=200 v-if="imageUrl" :src="imageUrl" alt="">
       </div>      
@@ -26,6 +26,13 @@
     <div style="margin-top: 20px">
       oss上传
       <input class="" ref="fileLoadId" type="file" id="fileLoadId" name="fileLoadId" @change="ossUpload">
+    </div>
+    <div style="margin-top: 20px">
+      上传图片-oss
+      <image-upload fileLoadId="image_upload_2" @output-image="getImage" :oss="true"></image-upload>
+      <div style="margin-top: 10px">
+        <img width=200 v-if="imageUrl" :src="imageUrl" alt="">
+      </div>      
     </div>
 
   </div>  
@@ -86,7 +93,10 @@ export default {
     },
     ossSign () {
       let path = '/proxy/api/upload/ossSign'
-      axios.post(path)
+      axios.post(path, {
+        // dirpath: 'demo/files/',
+        // filename: '1234.jpg'
+      })
       .then(function (response) {
         console.log(response)
       }).catch(function (error) {
@@ -99,7 +109,7 @@ export default {
       axios.post(`/proxy/api/upload/ossSign`)
         .then((res) => {
           console.log('res', res)
-          const params = res.data.result
+          const {params, host} = res.data.result
           var formData = new FormData()
           // var params = res.data.params
           for (var key in params) {
@@ -110,7 +120,7 @@ export default {
 
           axios({
             method: 'post',
-            url: params.host,
+            url: host,
             headers: {
               'Content-Type': 'multipart/form-data'
             },

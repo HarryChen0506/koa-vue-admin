@@ -66,9 +66,18 @@ exports.image = async (ctx, next) => {
 
 // 阿里云oss
 exports.ossSign = async (ctx, next) => {
+  const {request} = ctx
+  // const {dirpath, filename} = request.body
+  const defaultConfig = {
+    dirpath: 'oss/file/',
+    // filename: Date.now(),
+    filename: util.createFileName()
+  }
+  const option = Object.assign({}, defaultConfig, request.body)
+  console.log('options', option)
   // 获取policy
   try {
-    const result = await upload_service.ossSign()
+    const result = await upload_service.ossSign(option)
     ctx.body = util.handleResult('success', result)
   } catch (err) {
     throw new Error(err)

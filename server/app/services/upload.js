@@ -52,39 +52,53 @@ const upload = {
     })
   },
 
-  async ossSign (options) {
+  async ossSign (options = {}) {
+    // options {dirpath, filename}
     return new Promise(async (resolve, reject) => {
-      const config = {
-        dirPath: 'oss/file/', // oss 文件夹 不存在会自动创建
-        bucket: 'static01-harry', // oss应用名
-        region: 'oss-cn-hangzhou', // oss节点名
-        accessKeyId: 'LTAIyRZ7GVhw11Ns', // 申请的osskey
-        accessKeySecret: 'qz3mjrJkH8YB39B854BhdbYjDVm5q5', // 申请的osssecret
+      const defaultConfig = {
+        dirpath: 'oss/file/', // oss 文件夹 不存在会自动创建
+        filename: Date.now(), // 默认文件名为时间戳
+        bucket: 'static01-harry',
+        endpoint: 'https://oss-cn-hangzhou.aliyuncs.com/',
+        region: 'oss-cn-hangzhou',
+        accessKeyId: 'LTAIyRZ7GVhw11Ns',
+        accessKeySecret: 'qz3mjrJkH8YB39B854BhdbYjDVm5q5',
         expAfter: 60000, // 签名失效时间
         maxSize: 1048576000 // 最大文件大小
       }
-      const {bucket, region, expAfter, maxSize, dirPath, accessKeyId, accessKeySecret} = config
+      const config = Object.assign({}, defaultConfig, options)
+      const {dirpath, filename, bucket, endpoint, region, expAfter, maxSize, accessKeyId, accessKeySecret} = config
 
-      const host = `http://${bucket}.${region}.aliyuncs.com` // 你的oss完整地址
+      const host = `http://${bucket}.${region}.aliyuncs.com/` // 你的oss完整地址
       const expireTime = new Date().getTime() + expAfter
       const expiration = new Date(expireTime).toISOString()
       const policyString = JSON.stringify({
         expiration,
         conditions: [
           ['content-length-range', 0, maxSize],
-          ['starts-with', '$key', dirPath]
+          ['starts-with', '$key', dirpath]
         ]
       })
       const policy = Buffer(policyString).toString('base64')
       const Signature = crypto.createHmac('sha1', accessKeySecret).update(policy).digest('base64')
+      const fileUrl = `${host}${dirpath}${filename}`
+      // 返回结果
       const result = {
-        Signature,
-        policy,
+        bucket,
+        endpoint,
         host,
-        'OSSAccessKeyId': accessKeyId,
-        'key': dirPath + expireTime,
-        'success_action_status': 200,
-        dirPath
+        expireTime,
+        expiration,
+        dirpath,
+        filename,
+        fileUrl,
+        params: {
+          Signature,
+          policy,
+          'OSSAccessKeyId': accessKeyId,
+          'key': dirpath + filename,
+          'success_action_status': 200
+        }
       }
       resolve(result)
     })
