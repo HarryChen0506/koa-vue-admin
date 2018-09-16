@@ -22,16 +22,12 @@
     <div style="margin-top: 20px">
       上传文件
       <file-upload fileLoadId="file_upload_1" @output-file="getFile"></file-upload>
-    </div>
-    <div style="margin-top: 20px">
-      oss上传
-      <input class="" ref="fileLoadId" type="file" id="fileLoadId" name="fileLoadId" @change="ossUpload">
-    </div>
+    </div>    
     <div style="margin-top: 20px">
       上传图片-oss
-      <image-upload fileLoadId="image_upload_2" @output-image="getImage" :oss="true"></image-upload>
+      <image-upload fileLoadId="image_upload_2" @output-image="getOssImage" :oss="true" dir-path="demo/image/"></image-upload>
       <div style="margin-top: 10px">
-        <img width=200 v-if="imageUrl" :src="imageUrl" alt="">
+        <img width=200 v-if="ossImageUrl" :src="ossImageUrl" alt="">
       </div>      
     </div>
 
@@ -55,7 +51,8 @@ export default {
   },
   data () {
     return {
-      imageUrl: ''
+      imageUrl: '',
+      ossImageUrl: ''
     }
   },
   methods: {
@@ -103,39 +100,12 @@ export default {
         console.log(error)
       })
     },
-    ossUpload () {
-      const file = this.$refs['fileLoadId'].files[0]
-      console.log('file', file)
-      axios.post(`/proxy/api/upload/ossSign`)
-        .then((res) => {
-          console.log('res', res)
-          const {params, host} = res.data.result
-          var formData = new FormData()
-          // var params = res.data.params
-          for (var key in params) {
-            formData.append(key, params[key])
-          }
-          // params.key = res.data.prefix + filename + suffix
-          formData.append('file', file)
-
-          axios({
-            method: 'post',
-            url: host,
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            },
-            data: formData
-          }).then((data) => {
-            console.log('data', data)
-          })
-
-        })
-
-
-    },
     getImage (data) {
       // console.log('data', data)
       this.imageUrl = data.pictureUrl
+    },
+    getOssImage (data) {
+      this.ossImageUrl = data.pictureUrl
     },
     uploadFile () {
       console.log('upload file')

@@ -44,11 +44,12 @@
   // import {convertBase64UrlToBlob} from '~/plugins/compressImg'
   export default {
     name: 'imageUpload',
-    props: ['config', 'fileLoadId', 'oss'],
+    props: ['config', 'fileLoadId', 'oss', 'dirPath'],
     data () {
       return {
         componentId: this.fileLoadId || Date.now(),
         isOss: this.oss === undefined ? true : (!!this.oss), // mode 上传模式 默认阿里oss 否则上传到服务器
+        dirpath: this.dirPath || 'demo/images/',
         model: {          
           config: this.config || {},
           pictureUrl: ''
@@ -115,7 +116,7 @@
         const filename = util.createImgName()
         const postData = {
           filename: `${filename}${suffix}`,
-          dirpath: 'demo/images/'
+          dirpath: this.dirpath
         }
         axios.post(`/proxy/api/upload/ossSign`, postData)
           .then((res) => {
@@ -126,7 +127,6 @@
             }
             // params.key = res.data.prefix + filename + suffix
             formData.append('file', file)
-            let picUrl = 
             axios({
               method: 'post',
               url: host,
@@ -135,7 +135,6 @@
               },
               data: formData
             }).then((data) => {
-              console.log('data', data)
               if (data.status === 200) {
                 this.model.pictureUrl = fileUrl
                 this.dispatch()
