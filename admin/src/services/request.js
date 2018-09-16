@@ -20,6 +20,10 @@ const user = {
 		const path = '/proxy/api/users'
 		const url = util.formatUrl(path, option)	
 		return http.httpGet(url)
+	},
+	createUser: function (data) {
+		const path = '/proxy/api/users'
+		return http.httpPost(path, data)
 	}
 }
 

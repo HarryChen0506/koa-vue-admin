@@ -8,6 +8,7 @@ module.exports = (app) => {
   const UserSchema = new Schema({
     username: { type: String },
     password: { type: String },
+    avatar: { type: String },
     create_time: { type: Date, default: Date.now },
     update_time: { type: Date, default: Date.now }
   })

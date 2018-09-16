@@ -60,7 +60,7 @@
     },
     methods: {
       dispatch () {
-        console.log('通知父组件', this.$refs)
+        // console.log('通知父组件', this.$refs)
         this.$emit('output-image', this.model)
       },
       upload () {

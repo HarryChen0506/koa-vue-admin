@@ -61,3 +61,25 @@ exports.info = async (ctx, next) => {
     id: user._id
   })
 }
+// 新增用户
+exports.post = async (ctx, next) => {
+  const {request} = ctx
+  const {username, password, ...rest} = request.body
+  try {
+    ctx.validate({
+      username: 'string',
+      password: 'string'
+    }, {username, password})
+  } catch (err) {
+    ctx.body = util.handleResult('fail', null, err)
+    return
+  }
+  try {
+    const result = await userService.create({username, password, ...rest})
+    const {...user} = result._doc
+    delete user.password
+    ctx.body = util.handleResult('success', user)
+  } catch (err) {
+    ctx.body = util.handleResult('fail', null, err.message || '创建用户失败')
+  }
+}

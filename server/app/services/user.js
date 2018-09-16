@@ -40,6 +40,23 @@ const user = {
       list,
       total
     }
+  },
+  async create (schema = {}) {
+    let {username, password, ...rest} = schema
+    try {
+      const isExist = await UserModel.find({username})
+      // console.log('isExist', isExist)
+      if (isExist.length > 0) {
+        throw '该用户已存在'
+      }
+    } catch (err) {
+      throw new Error(err)
+    }    
+    if (!username || !password) {
+      return null
+    }
+    let newUser = new UserModel({username, password, ...rest})
+    return newUser.save()
   }
 }
 module.exports = user
