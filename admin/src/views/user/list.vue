@@ -59,9 +59,8 @@
 					prop="active"
 					label="状态">
 					<template slot-scope="scope">
-						<span>
-							{{scope.row.active === 1 ? '启用' : '禁用'}}
-						</span>
+						<el-tag v-if="scope.row.active === 1" size="mini">启用</el-tag>
+						<el-tag v-else size="mini" type="danger">禁用</el-tag>						
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -81,7 +80,7 @@
 					width="260">
 					<template slot-scope="scope">
 						<el-button type="success" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row)"></el-button>
-						<el-button type="success" size="mini" @click="handleActive(scope.row)">
+						<el-button :type="scope.row.active === 1 ? 'danger' : 'warning'" size="mini" @click="handleActive(scope.row)">
 							{{scope.row.active === 1 ? '禁用' : '启用'}}
 						</el-button>
 						<el-button type="info" icon="el-icon-delete" size="mini"></el-button>
