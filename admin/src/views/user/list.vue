@@ -56,6 +56,15 @@
 					</template>
 				</el-table-column>
 				<el-table-column
+					prop="active"
+					label="状态">
+					<template slot-scope="scope">
+						<span>
+							{{scope.row.active === 1 ? '启用' : '禁用'}}
+						</span>
+					</template>
+				</el-table-column>
+				<el-table-column
 					prop="create_time"
 					:formatter="formatDate"
 					label="注册时间">
@@ -72,8 +81,9 @@
 					width="260">
 					<template slot-scope="scope">
 						<el-button type="success" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row)"></el-button>
-						<el-button type="success" size="mini">启用</el-button>
-						<el-button type="success" size="mini">禁用</el-button>
+						<el-button type="success" size="mini" @click="handleActive(scope.row)">
+							{{scope.row.active === 1 ? '禁用' : '启用'}}
+						</el-button>
 						<el-button type="info" icon="el-icon-delete" size="mini"></el-button>
 					</template>
 				</el-table-column>
@@ -296,6 +306,7 @@ export default {
 					message: '创建用户成功',
 					type: 'success'
 				})
+				this.query()
 				this.closeDialog()
 			}, err => {
 				this.$message.error(err || '创建用户失败')
@@ -308,6 +319,7 @@ export default {
 					message: '修改用户成功',
 					type: 'success'
 				})
+				this.query()
 				this.closeDialog()
 			}, err => {
 				this.$message.error(err || '修改用户失败')
@@ -340,7 +352,6 @@ export default {
 			if (avatar !== stock.avatar) {
 				putData.avatar = avatar
 			}
-			console.log('putData', putData)
 			try {
         const result = await request.user.updateUser(putData) 
 				const {data} = result
@@ -352,6 +363,39 @@ export default {
       } catch (err) {
 				typeof failNext === 'function' && failNext(err)
       }   
+		},
+		async http_update_user (data, sucNext, failNext) {
+			const {id, ...rest} = data
+			const putData = {id, ...rest}
+			try {
+        const result = await request.user.updateUser(putData) 
+				const {data} = result
+				if (data.success) {
+					typeof sucNext === 'function' && sucNext(data)
+				} else {
+					typeof failNext === 'function' && failNext(data)
+				}		
+      } catch (err) {
+				typeof failNext === 'function' && failNext(err)
+      }  
+		},
+		handleActive (user) {
+			const status = user.active === 0 ? 1 : 0
+			const data = {
+				id: user._id,
+				active: status
+			}
+			this.http_update_user(data, () => {
+				this.$message({
+					showClose: true,
+					message: '修改用户状态成功',
+					type: 'success'
+				})
+				this.query()
+				this.closeDialog()
+			}, err => {
+				this.$message.error(err || '修改用户状态失败')
+			})
 		}
   }
 }
