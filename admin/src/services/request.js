@@ -24,6 +24,10 @@ const user = {
 	createUser: function (data) {
 		const path = '/proxy/api/users'
 		return http.httpPost(path, data)
+	},
+	updateUser: function (data) {
+		const path = '/proxy/api/users'
+		return http.httpPut(path, data)
 	}
 }
 

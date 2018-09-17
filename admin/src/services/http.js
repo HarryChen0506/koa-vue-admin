@@ -61,10 +61,27 @@ function httpPostForm(url, data){
 	})
 	return promise   
 }
+// put请求
+function httpPut(url, data){
+	let promise = new Promise(function(resolve, reject){		  
+		axios({
+			method: 'put',
+			url: url,
+			data: data
+		}).then(function(response){
+			resolve(response)
+		}).catch(function(err){
+			reject(err)
+		})
+	})
+	return promise   
+}
+
 let http = {
 	httpGet,
 	httpPost,
-	httpPostForm
+	httpPostForm,
+	httpPut
 }
 
 export default http

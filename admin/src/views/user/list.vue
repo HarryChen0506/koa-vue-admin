@@ -35,7 +35,7 @@
 				<el-table-column
 					type="index"
 					label="顺序"
-					width="100">
+					width="50">
 				</el-table-column>
 				<el-table-column
 					prop="_id"
@@ -68,9 +68,12 @@
 				<el-table-column
 					prop="update_time"
 					:formatter="formatDate"
-					label="操作">
+					label="操作"
+					width="260">
 					<template slot-scope="scope">
-						<el-button type="success" icon="el-icon-edit" size="mini"></el-button>
+						<el-button type="success" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row)"></el-button>
+						<el-button type="success" size="mini">启用</el-button>
+						<el-button type="success" size="mini">禁用</el-button>
 						<el-button type="info" icon="el-icon-delete" size="mini"></el-button>
 					</template>
 				</el-table-column>
@@ -91,7 +94,6 @@
 				style="position: fixed; right: 40px; bottom: 40px" 
 				type="danger" 
 				icon="el-icon-plus" 
-				size="small" 
 				@click="openCreateDialog"
 				circle ></el-button>
 		</section>
@@ -104,8 +106,17 @@
 				<el-form-item label="用户名">
 					 <el-input v-model="dialog.model.username" style="width: 200px"></el-input>
 				</el-form-item>
-				<el-form-item label="密码">
+				<el-form-item label="密码" v-if="dialog.type === 'create'">
 					 <el-input v-model="dialog.model.password" style="width: 200px"></el-input>
+				</el-form-item>
+				<el-form-item label="新密码" v-if="dialog.type === 'edit'">					
+					<el-input v-if="dialog.model.changePassword" v-model="dialog.model.newPassword" style="width: 200px"></el-input>
+					<el-switch
+						v-model="dialog.model.changePassword"
+						style="margin-left: 20px"
+						active-color="#13ce66"
+						inactive-color="#ff4949">
+					</el-switch>
 				</el-form-item>
 				<el-form-item label="头像">
 					<image-upload fileLoadId="image_upload_2" @output-image="getAvatarImage" :oss="true" dir-path="demo/image/"></image-upload>
@@ -186,13 +197,21 @@ export default {
 				title: '',
 				visible: false,
 				initData: {
+					stock: null,
+					id: '',
 					username: '',
 					password: '',
-					avatar: 'http://static01-harry.oss-cn-hangzhou.aliyuncs.com/demo/image/5863-f184-ed2e-a081-5c19.jpg',	
+					changePassword: false,
+					newPassword: '',
+					avatar: 'http://static01-harry.oss-cn-hangzhou.aliyuncs.com/demo/image/5863-f184-ed2e-a081-5c19.jpg',						
 				},
 				model: {
+					stock: null,
+					id: '',
 					username: '',
-					password: '',
+					password: '',	
+					changePassword: false,
+					newPassword: '',
 					avatar: '',
 				}
 			}
@@ -235,6 +254,22 @@ export default {
 			this.dialog.visible = true
 			this.dialog.type = 'create'
 			this.dialog.title = '新增用户'
+			this.dialog.model = util.deepClone(this.dialog.initData)			
+		},
+		openEditDialog (item) {
+			console.log('编辑用户', item)
+			this.dialog.visible = true
+			this.dialog.type = 'edit'
+			this.dialog.title = '编辑用户'	
+			this.dialog.model = util.deepClone(this.dialog.initData)		
+			this.parseUserData(item, this.dialog.model)
+		},
+		parseUserData (item = {}, model) {
+			const {_id, username, avatar} = item
+			model.id = _id
+			model.username = username
+			model.avatar = avatar
+			model.stock = util.deepClone(item)	
 		},
 		getAvatarImage (data) {
 			this.dialog.model.avatar = data.pictureUrl
@@ -247,7 +282,15 @@ export default {
 		},
 		dialogConfirm () {
 			console.log('confirm')
-			this.http_create_user(data => {
+			const type = this.dialog.type
+			if (type === 'create') {
+				this.createUser()
+			} else if (type === 'edit') {
+				this.editUser()
+			}
+		},
+		createUser () {
+			this.http_create_user(() => {
 				this.$message({
 					showClose: true,
 					message: '创建用户成功',
@@ -258,11 +301,48 @@ export default {
 				this.$message.error(err || '创建用户失败')
 			})
 		},
+		editUser () {
+			this.http_edit_user(() => {
+				this.$message({
+					showClose: true,
+					message: '修改用户成功',
+					type: 'success'
+				})
+				this.closeDialog()
+			}, err => {
+				this.$message.error(err || '修改用户失败')
+			})
+		},
 		async http_create_user (sucNext, failNext) {
 			const  {username, password, avatar} = this.dialog.model
 			const postData = {username, password, avatar}
 			try {
         const result = await request.user.createUser(postData) 
+				const {data} = result
+				if (data.success) {
+					typeof sucNext === 'function' && sucNext(data)
+				} else {
+					typeof failNext === 'function' && failNext(data)
+				}		
+      } catch (err) {
+				typeof failNext === 'function' && failNext(err)
+      }   
+		},
+		async http_edit_user (sucNext, failNext) {
+			const {id, username, changePassword, newPassword, avatar, stock} = this.dialog.model
+			const putData = {id}
+			if (changePassword) {
+				putData.password = newPassword
+			}
+			if (username !== stock.username) {
+				putData.username = username
+			}
+			if (avatar !== stock.avatar) {
+				putData.avatar = avatar
+			}
+			console.log('putData', putData)
+			try {
+        const result = await request.user.updateUser(putData) 
 				const {data} = result
 				if (data.success) {
 					typeof sucNext === 'function' && sucNext(data)

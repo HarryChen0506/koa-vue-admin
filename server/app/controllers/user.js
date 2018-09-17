@@ -83,3 +83,27 @@ exports.post = async (ctx, next) => {
     ctx.body = util.handleResult('fail', null, err.message || '创建用户失败')
   }
 }
+// 更新用户
+exports.put = async (ctx, next) => {
+  const {request} = ctx
+  const {id, ...rest} = request.body
+  try {
+    ctx.validate({
+      id: 'string'
+    }, {id})
+  } catch (err) {
+    ctx.body = util.handleResult('fail', null, err)
+    return
+  }
+  try {
+    const result = await userService.update({id, ...rest})
+    // { ok: 1, nModified: 1, n: 1 }
+    if (result.ok === 1) {
+      ctx.body = util.handleResult('success', true)
+    } else {
+      ctx.body = util.handleResult('fail', null, '更新用户失败')
+    }
+  } catch (err) {
+    ctx.body = util.handleResult('fail', null, err.message || '更新用户失败')
+  }
+}

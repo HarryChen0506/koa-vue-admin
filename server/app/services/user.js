@@ -51,12 +51,37 @@ const user = {
       }
     } catch (err) {
       throw new Error(err)
-    }    
+    }
     if (!username || !password) {
       return null
     }
     let newUser = new UserModel({username, password, ...rest})
     return newUser.save()
+  },
+  async update (schema = {}) {
+    let {id, ...rest} = schema
+    try {
+      const isValid = await UserModel.findOne({_id: id})
+      // console.log('isExist', isExist)
+      if (!isValid) {
+        throw '该用户不存在'
+      }
+    } catch (err) {
+      throw new Error(err)
+    }
+    // 判断用户名是否重名
+    if (schema.username) {
+      try {
+        const isExist = await UserModel.find({username: schema.username})
+        // console.log('isExist', isExist)
+        if (isExist.length > 0) {
+          throw '该用户名已存在'
+        }
+      } catch (err) {
+        throw new Error(err)
+      }
+    }
+    return UserModel.update({_id: id}, {$set: {...rest}})
   }
 }
 module.exports = user

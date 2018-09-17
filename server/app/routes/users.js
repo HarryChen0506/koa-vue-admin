@@ -9,5 +9,6 @@ const user = require('../controllers/user')
 router.get('/', authToken, user.index)
 router.get('/:id', authToken, user.info)
 router.post('/', user.post)
+router.put('/', user.put)
 router.get('/demo/show', authToken, user.show)
 module.exports = router
