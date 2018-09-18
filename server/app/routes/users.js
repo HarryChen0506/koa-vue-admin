@@ -11,4 +11,5 @@ router.get('/:id', authToken, user.info)
 router.post('/', authToken, user.post)
 router.put('/', authToken, user.put)
 router.get('/demo/show', authToken, user.show)
+
 module.exports = router

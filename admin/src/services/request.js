@@ -30,7 +30,23 @@ const user = {
 		return http.httpPut(path, data)
 	}
 }
+const role = {
+	getRoleByParams: function (option = {}) {			
+		const path = '/proxy/api/role'
+		const url = util.formatUrl(path, option)
+		return http.httpGet(url)
+	},
+	createRole: function (data) {
+		const path = '/proxy/api/role'
+		return http.httpPost(path, data)
+	},
+	updateRole: function (data) {
+		const path = '/proxy/api/role'
+		return http.httpPut(path, data)
+	}
+}
 
 export default  {    
-  user
+	user,
+	role
 }

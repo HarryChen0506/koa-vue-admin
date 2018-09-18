@@ -107,3 +107,13 @@ exports.put = async (ctx, next) => {
     ctx.body = util.handleResult('fail', null, err.message || '更新用户失败')
   }
 }
+
+// 角色管理
+const role = {
+  async index (ctx, next) {
+    console.log('role')
+    ctx.body = util.handleResult('success', true)
+  }
+}
+
+exports.role = role

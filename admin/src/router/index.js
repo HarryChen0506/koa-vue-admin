@@ -67,7 +67,13 @@ export default new Router({
           path: 'list',
           name: 'user-list',
           meta: {title: '列表', icon: 'icon-table'},
-          component:  () => import(/* webpackChunkName: "about" */ '@/views/user/list.vue')
+          component:  () => import(/* webpackChunkName: "list" */ '@/views/user/list.vue')
+        },
+        {
+          path: 'role',
+          name: 'user-role',
+          meta: {title: '角色', icon: 'icon-user'},
+          component:  () => import(/* webpackChunkName: "role" */ '@/views/user/role.vue')
         }        
       ]
     },

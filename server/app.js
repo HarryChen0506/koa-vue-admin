@@ -14,6 +14,7 @@ const validate = require('./app/middlewares/validate')
 // 路由
 const index = require('./app/routes/index')
 const users = require('./app/routes/users')
+const role = require('./app/routes/role')
 const auth = require('./app/routes/auth')
 const upload = require('./app/routes/upload')
 
@@ -53,6 +54,7 @@ mongodb(app)
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(role.routes(), role.allowedMethods())
 app.use(auth.routes(), auth.allowedMethods())
 app.use(upload.routes(), upload.allowedMethods())
 
