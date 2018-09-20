@@ -36,6 +36,11 @@ const role = {
 		const url = util.formatUrl(path, option)
 		return http.httpGet(url)
 	},
+	getAllRoles: function (option = {}) {
+		const path = '/proxy/api/role/all'
+		const url = util.formatUrl(path, option)
+		return http.httpGet(url)
+	},
 	createRole: function (data) {
 		const path = '/proxy/api/role'
 		return http.httpPost(path, data)

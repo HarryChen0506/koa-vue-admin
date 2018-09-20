@@ -108,10 +108,10 @@
       width="30%" center>    
       <el-form  @submit.native.prevent class="demo-form-inline" label-width="60px">
 				<el-form-item label="角色名">
-					 <el-input v-model="dialog.model.rolename" style="width: 200px"></el-input>
+					<el-input v-model="dialog.model.rolename" style="width: 200px"></el-input>
 				</el-form-item>
 				<el-form-item label="角色码">
-					 <el-input v-model="dialog.model.rolecode" style="width: 200px"></el-input>
+					<el-input v-model="dialog.model.rolecode" style="width: 200px"></el-input>
 				</el-form-item>				
 			</el-form>      
       <span slot="footer" class="dialog-footer">

@@ -47,6 +47,12 @@
 					label="用户名">
 				</el-table-column>
 				<el-table-column
+					label="角色">
+					<template slot-scope="scope">
+						<el-tag style="margin-right: 5px" size="mini" v-for="item in scope.row.role" :key="item._id">{{item.rolename}}</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column
 					prop="avatar"
 					label="头像">
 					<template slot-scope="scope">
@@ -62,12 +68,7 @@
 						<el-tag v-if="scope.row.active === 1" size="mini">启用</el-tag>
 						<el-tag v-else size="mini" type="danger">禁用</el-tag>						
 					</template>
-				</el-table-column>
-				<el-table-column
-					prop="create_time"
-					:formatter="formatDate"
-					label="注册时间">
-				</el-table-column>
+				</el-table-column>				
 				<el-table-column
 					prop="update_time"
 					:formatter="formatDate"
@@ -113,10 +114,10 @@
       width="30%" center>    
       <el-form  @submit.native.prevent class="demo-form-inline" label-width="60px">
 				<el-form-item label="用户名">
-					 <el-input v-model="dialog.model.username" style="width: 200px"></el-input>
+					<el-input v-model="dialog.model.username" style="width: 200px"></el-input>
 				</el-form-item>
 				<el-form-item label="密码" v-if="dialog.type === 'create'">
-					 <el-input v-model="dialog.model.password" style="width: 200px"></el-input>
+					<el-input v-model="dialog.model.password" style="width: 200px"></el-input>
 				</el-form-item>
 				<el-form-item label="新密码" v-if="dialog.type === 'edit'">					
 					<el-input v-if="dialog.model.changePassword" v-model="dialog.model.newPassword" style="width: 200px"></el-input>
@@ -126,6 +127,16 @@
 						active-color="#13ce66"
 						inactive-color="#ff4949">
 					</el-switch>
+				</el-form-item>
+				<el-form-item label="角色">
+					<el-select v-model="dialog.model.role" multiple placeholder="请选择">
+						<el-option
+							v-for="item in staticModel.roleList"
+							:key="item._id"
+							:label="item.rolename"
+							:value="item._id">
+						</el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="头像">
 					<image-upload fileLoadId="image_upload_2" @output-image="getAvatarImage" :oss="true" dir-path="demo/image/"></image-upload>
@@ -201,6 +212,9 @@ export default {
 				// 	"__v": 0
 				// }
 			],
+			staticModel: {
+				roleList: []
+			},
 			dialog: {
 				type: '',
 				title: '',
@@ -210,6 +224,7 @@ export default {
 					id: '',
 					username: '',
 					password: '',
+					role: [],
 					changePassword: false,
 					newPassword: '',
 					avatar: 'http://static01-harry.oss-cn-hangzhou.aliyuncs.com/demo/image/5863-f184-ed2e-a081-5c19.jpg',						
@@ -218,7 +233,8 @@ export default {
 					stock: null,
 					id: '',
 					username: '',
-					password: '',	
+					password: '',
+					role: [],
 					changePassword: false,
 					newPassword: '',
 					avatar: '',
@@ -228,6 +244,7 @@ export default {
 	},
 	mounted () {
 		this.search()
+		this.queryAllRoles()
 	},
   methods: {
 		search () {
@@ -252,6 +269,19 @@ export default {
 				this.$message.error('获取用户列表失败!')
       }      
 		},
+		async queryAllRoles () {
+			try {
+        const result = await request.role.getAllRoles()  
+				const {data} = result
+				console.log('data', data)
+				if (data.success) {
+					this.staticModel.roleList = data.result.list
+				}				
+      } catch (err) {
+				console.log(err)
+				this.$message.error('获取角色列表失败!')
+      }     
+		},
 		handleCurrentChange () {
 			this.query()
 		},
@@ -274,9 +304,10 @@ export default {
 			this.parseUserData(item, this.dialog.model)
 		},
 		parseUserData (item = {}, model) {
-			const {_id, username, avatar} = item
+			const {_id, username, role = [], avatar} = item
 			model.id = _id
 			model.username = username
+			model.role = role.map(v => v._id)
 			model.avatar = avatar
 			model.stock = util.deepClone(item)	
 		},
@@ -325,8 +356,8 @@ export default {
 			})
 		},
 		async http_create_user (sucNext, failNext) {
-			const  {username, password, avatar} = this.dialog.model
-			const postData = {username, password, avatar}
+			const  {username, password, role, avatar} = this.dialog.model
+			const postData = {username, password, role, avatar}
 			try {
         const result = await request.user.createUser(postData) 
 				const {data} = result
@@ -340,8 +371,8 @@ export default {
       }   
 		},
 		async http_edit_user (sucNext, failNext) {
-			const {id, username, changePassword, newPassword, avatar, stock} = this.dialog.model
-			const putData = {id}
+			const {id, username, changePassword, newPassword, role, avatar, stock} = this.dialog.model
+			const putData = {id, role}
 			if (changePassword) {
 				putData.password = newPassword
 			}

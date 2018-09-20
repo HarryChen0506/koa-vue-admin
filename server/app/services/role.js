@@ -41,6 +41,17 @@ const role = {
       total
     }
   },
+  async getAllRoles (query = {}) {
+    query.active = 1
+    query.delete = 0
+    const sort = {'create_time': -1}
+    const total = await RoleModel.find(query).count()
+    const list = await RoleModel.find(query, {delete: 0}).sort(sort)
+    return {
+      list,
+      total
+    }
+  },
   async create (schema = {}) {
     let {rolename, rolecode, ...rest} = schema
     if (!rolename || !rolename) {

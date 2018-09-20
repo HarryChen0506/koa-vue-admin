@@ -9,4 +9,5 @@ const role = require('../controllers/role')
 router.get('/', role.index)
 router.post('/', role.post)
 router.put('/', role.put)
+router.get('/all', role.all)
 module.exports = router

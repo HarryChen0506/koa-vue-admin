@@ -8,6 +8,7 @@ module.exports = (app) => {
   const UserSchema = new Schema({
     username: { type: String, required: true, trim: true },
     password: { type: String, trim: true },
+    role: [{ type: Schema.Types.ObjectId, required: true, ref: 'Role' }],
     avatar: { type: String, trim: true },
     active: { type: Number, min: 0, max: 1, default: 1 }, // 激活状态
     create_time: { type: Date, default: Date.now },

@@ -8,7 +8,7 @@ const user = {
     if (!id) {
       return null
     }
-    return UserModel.findOne({_id: id}).exec()
+    return UserModel.findOne({_id: id}).populate('role').exec()
   },
   async getUserByParams (params = {}) {
     // const {username, nickname, id} = params
@@ -34,7 +34,10 @@ const user = {
     const sort = {'create_time': -1}
 
     const total = await UserModel.find(query).count()
-    const list = await UserModel.find(query, {password: 0}).skip(skipNum).limit(pageSize).sort(sort)
+    const list = await UserModel
+                        .find(query, {password: 0})
+                        .populate({path: 'role', match: {active: 1}, select: {rolename: 1}})
+                        .skip(skipNum).limit(pageSize).sort(sort)
 
     return {
       list,
