@@ -50,8 +50,23 @@ const role = {
 		return http.httpPut(path, data)
 	}
 }
+const literature = {
+	article: {
+		getArticleByParams: function (option = {}) {			
+			const path = '/proxy/api/literature/article/list'
+			const url = util.formatUrl(path, option)
+			return http.httpGet(url)
+		},
+		createArticle: function (data) {
+			const path = '/proxy/api/literature/article'
+			return http.httpPost(path, data)
+		},
+		
+	}
+}
 
 export default  {    
 	user,
-	role
+	role,
+	literature
 }

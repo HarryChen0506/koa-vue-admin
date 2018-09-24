@@ -43,18 +43,18 @@ export default new Router({
       component: Layout,
       meta: {title: '案例', icon: 'icon-suitcase'},
       children: [
-        {
-          path: 'about',
-          name: 'demo-about',
-          meta: {title: '新关于', icon: 'el-icon-star-on'},         
-          component:  () => import(/* webpackChunkName: "about" */ '@/views/demo/About.vue')
-        },
-        {
-          path: 'hello',
-          name: 'hello',
-          meta: {title: '你好', icon: 'el-icon-star-on'},
-          component:  () => import(/* webpackChunkName: "about" */ '@/views/demo/Home.vue')
-        }
+        // {
+        //   path: 'about',
+        //   name: 'demo-about',
+        //   meta: {title: '新关于', icon: 'el-icon-star-on'},         
+        //   component:  () => import(/* webpackChunkName: "about" */ '@/views/demo/About.vue')
+        // },
+        // {
+        //   path: 'hello',
+        //   name: 'hello',
+        //   meta: {title: '你好', icon: 'el-icon-star-on'},
+        //   component:  () => import(/* webpackChunkName: "about" */ '@/views/demo/Home.vue')
+        // }
       ]
     },
     {
@@ -93,6 +93,20 @@ export default new Router({
           name: 'richtext',
           meta: {title: '富文本', icon: 'icon-underline'},
           component: Richtext
+        }
+      ]
+    },
+    {
+      path: '/literature',
+      name: 'literature',
+      component: Layout,
+      meta: {title: '文学', icon: 'icon-book'},
+      children: [
+        {
+          path: 'article',
+          name: 'article',
+          meta: {title: '文章', icon: 'icon-table'},
+          component:  () => import('@/views/literature/article.vue')
         }
       ]
     }

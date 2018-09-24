@@ -66,24 +66,24 @@ const role = {
     } catch (err) {
       throw new Error(err)
     }
-   
+
     let newUser = new RoleModel({rolename, rolecode, ...rest})
     return newUser.save()
   },
   async update (schema = {}) {
     let {id, ...rest} = schema
-    
+
     // 判断角色名是否重名
     if (schema.rolename || schema.rolecode) {
       try {
         const isExist = await RoleModel.find(
           {
             $or: [{
-                rolename: schema.rolename,
-                _id: {$ne: id}
-              }, {
-                rolecode: schema.rolecode,
-                _id: {$ne: id}
+              rolename: schema.rolename,
+              _id: {$ne: id}
+            }, {
+              rolecode: schema.rolecode,
+              _id: {$ne: id}
             }]
           }) // {$or: [{rolename},{rolecode}]}
         if (isExist.length > 0) {

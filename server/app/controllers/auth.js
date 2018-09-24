@@ -49,10 +49,10 @@ exports.register = async (ctx, next) => {
   const {username, password} = ctx.request.body
   // 如果参数校验未通过，将会抛出一个 status = 422 的异常
   try {
-     ctx.validate({
+    ctx.validate({
       username: 'string',
       password: 'string'
-     }, { username, password })
+    }, { username, password })
   } catch (err) {
     ctx.body = util.handleResult('fail', null, err)
     return

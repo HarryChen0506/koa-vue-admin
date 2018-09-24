@@ -5,18 +5,18 @@ const roleService = require('../services/role')
 
 // 角色管理
 // 角色列表
-exports.index =  async (ctx, next) => {    
-	const {query} = ctx
-	console.log('query', query)
-	try {
-			const role = await roleService.getRoleByParams(query)
-			ctx.dblog.info('auth: role query success')
-			ctx.body = util.handleResult('success', role)
-	} catch (err) {
-			ctx.dblog.info('auth: role is not exist')
-			// 用户校验错误
-			ctx.body = util.handleResult('fail', null, err || '角色不存在')
-	}
+exports.index = async (ctx, next) => {    
+  const {query} = ctx
+  console.log('query', query)
+  try {
+    const role = await roleService.getRoleByParams(query)
+    ctx.dblog.info('auth: role query success')
+    ctx.body = util.handleResult('success', role)
+  } catch (err) {
+    ctx.dblog.info('auth: role is not exist')
+    // 用户校验错误
+    ctx.body = util.handleResult('fail', null, err || '角色不存在')
+  }
 }
 // 创建角色
 exports.post = async (ctx, next) => {
@@ -63,15 +63,15 @@ exports.put = async (ctx, next) => {
   }
 }
 // 所有角色
-exports.all =  async (ctx, next) => {    
-	const {query} = ctx
-	try {
-			const role = await roleService.getAllRoles(query)
-			ctx.dblog.info('auth: role query success')
-			ctx.body = util.handleResult('success', role)
-	} catch (err) {
-			ctx.dblog.info('auth: role is not exist')
-			// 用户校验错误
-			ctx.body = util.handleResult('fail', null, err || '角色不存在')
-	}
+exports.all = async (ctx, next) => {    
+  const {query} = ctx
+  try {
+    const role = await roleService.getAllRoles(query)
+    ctx.dblog.info('auth: role query success')
+    ctx.body = util.handleResult('success', role)
+  } catch (err) {
+    ctx.dblog.info('auth: role is not exist')
+    // 用户校验错误
+    ctx.body = util.handleResult('fail', null, err || '角色不存在')
+  }
 }

@@ -17,6 +17,7 @@ const users = require('./app/routes/users')
 const role = require('./app/routes/role')
 const auth = require('./app/routes/auth')
 const upload = require('./app/routes/upload')
+const literature = require('./app/routes/literature')
 
 const config = require('./app/config/index.js')(app)
 // console.log('app.config', app.config)
@@ -34,8 +35,6 @@ app.use(bodyparser({
 app.use(json())
 // 自定义logger
 app.use(logger(config.middleware.logger))
-
-
 
 // 静态资源
 app.use(require('koa-static')(path.join(__dirname, '/app/public')))
@@ -57,6 +56,7 @@ app.use(users.routes(), users.allowedMethods())
 app.use(role.routes(), role.allowedMethods())
 app.use(auth.routes(), auth.allowedMethods())
 app.use(upload.routes(), upload.allowedMethods())
+app.use(literature.routes(), literature.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
