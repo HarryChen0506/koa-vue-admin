@@ -128,16 +128,17 @@
 				</el-form-item>
 				<el-form-item label="作者">
 					<el-row :gutter="12">						
-						<el-col :span="8" v-for = "item in dialog.model.writers" :key="item.name">
-							<div class="my-card">
-								<el-input type="text"  v-model="item.name" placeholder="作者" :autosize="{ minRows: 1, maxRows: 1}" size="mini"></el-input>
+						<el-col :span="8" v-for = "(item, index) in dialog.model.writers" :key="index">
+							<el-card shadow="hover">
+								<el-input v-model="item.name"  placeholder="作者" size="mini"></el-input>
 								<el-input
 									type="textarea"
 									:autosize="{ minRows: 2, maxRows: 5}"
 									placeholder="作者简介"
+									size="mini"
 									v-model="item.info">
 								</el-input>
-							</div>
+							</el-card>
 						</el-col>							
 						<el-button type="success" icon="el-icon-plus" size="mini"></el-button>		
 					</el-row>
@@ -152,10 +153,10 @@
 					</span>
 				</el-form-item>	
 				<el-form-item label="摘要">
-					<el-input v-model="dialog.model.abstract"	type="textarea"	:autosize="{ minRows: 2, maxRows: 5}"	placeholder="摘要"></el-input>
+					<el-input v-model="dialog.model.abstract"	type="textarea"	:autosize="{ minRows: 2, maxRows: 5}"	placeholder="摘要" size="mini"></el-input>
 				</el-form-item>
 				<el-form-item label="分类">
-					<el-select v-model="dialog.model.categoryIds" multiple placeholder="请选择分类">
+					<el-select v-model="dialog.model.categoryIds" multiple placeholder="请选择分类" size="mini">
 						<el-option
 							v-for="item in staticModel.categoryList"
 							:key="item._id"
@@ -165,7 +166,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="主分类">
-					<el-select v-model="dialog.model.mainCategoryId"  placeholder="请选择主分类">
+					<el-select v-model="dialog.model.mainCategoryId"  placeholder="请选择主分类" size="mini">
 						<el-option
 							v-for="item in staticModel.categoryList"
 							:key="item._id"
@@ -175,7 +176,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="标签">
-					<el-select v-model="dialog.model.tagIds" multiple placeholder="请选择主分类">
+					<el-select v-model="dialog.model.tagIds" multiple placeholder="请选择主分类" size="mini">
 						<el-option
 							v-for="item in staticModel.tagList"
 							:key="item._id"
@@ -220,6 +221,30 @@
 			box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
 			border-radius: 4px; 
       overflow: hidden;
+		}
+		.my-input {			
+			-webkit-appearance: none;
+			background-color: #fff;
+			background-image: none;
+			border-radius: 4px;
+			border: 1px solid #dcdfe6;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			color: #606266;
+			display: inline-block;				
+			outline: 0;
+			padding: 0 15px;
+			-webkit-transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+			transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+			width: 100%;
+			&.mini {
+				height: 28px;
+				line-height: 28px;
+				font-size: 12px;
+			}
+			&::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+				color: #bbb;
+			}
 		}
 	}
 </style>
