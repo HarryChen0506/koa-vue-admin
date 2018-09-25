@@ -67,5 +67,32 @@ module.exports = {
   },
   camelToUnderline: function (name) {
     return name.replace(/([A-Z])/g, '_$1').toLowerCase()
+  },
+  /**
+   * 转换对象的key(下划线转为驼峰)
+   * @param {*} object 处理对象
+   * @param {*} exception 排除 ['_id']
+   */
+  formatObjectKeyFromlineToCamel (object = {}, exception = []) {
+    var result = {}
+    Object.keys(object).forEach(v => {
+      if (exception.indexOf(v) > -1) {
+        result[v] = object[v]
+      } else {
+        result[this.underlineToCamel(v)] = object[v]
+      }
+    })
+    return result
+  },
+  formatObjectKeyFromCamelToLine (object = {}, exception = []) {
+    var result = {}
+    Object.keys(object).forEach(v => {
+      if (exception.indexOf(v) > -1) {
+        result[v] = object[v]
+      } else {
+        result[this.camelToUnderline(v)] = object[v]
+      }
+    })
+    return result
   }
 }

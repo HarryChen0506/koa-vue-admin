@@ -42,8 +42,8 @@ const article = {
     if (!title) {
       return null
     }
-    const doc = {title, ...rest}   
-    console.log('doc', doc)
+    const doc = {title, ...rest}
+    // console.log('doc', doc)
     let newUser = new ArticleModel(doc)
     return newUser.save()
   }

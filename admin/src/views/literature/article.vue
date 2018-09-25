@@ -38,13 +38,14 @@
 					width="50">
 				</el-table-column>
 				<el-table-column
-					prop="_id"
+					prop="Id"
 					label="文章Id"
 					width="210">
 				</el-table-column>
 				<el-table-column
 					prop="title"
-					label="文章名">
+					label="文章名"
+					width="150">
 				</el-table-column>
 				<el-table-column
 					label="作者">
@@ -53,7 +54,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column
-					prop="main_category_id"
+					prop="mainCategoryId"
 					label="分类">					
 				</el-table-column>
 				<el-table-column
@@ -79,15 +80,15 @@
 					</template>
 				</el-table-column>				 -->
 				<el-table-column
-					prop="update_time"
+					prop="updateTime"
 					:formatter="formatDate"
 					label="更新时间">
 				</el-table-column>
 				<el-table-column
-					prop="update_time"
 					:formatter="formatDate"
+					fixed="right"
 					label="操作"
-					width="260">
+					width="200">
 					<template slot-scope="scope">
 						<el-button type="success" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row)"></el-button>
 						<el-button :type="scope.row.active === 1 ? 'danger' : 'warning'" size="mini" @click="handleActive(scope.row)">

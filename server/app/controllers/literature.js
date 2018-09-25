@@ -7,11 +7,14 @@ const literatureService = require('../services/literature')
 const article = {
   async list (ctx, next) {
     const {query} = ctx
-    console.log('query', query)
+    // console.log('query', query)
     try {
-      const list = await literatureService.article.getArticleByParams(query)
+      const result = await literatureService.article.getArticleByParams(query)
+      result.list = result.list.map(v => {
+        return util.formatObjectKeyFromlineToCamel(v._doc)
+      })
       ctx.dblog.info('article: article query success')
-      ctx.body = util.handleResult('success', list)
+      ctx.body = util.handleResult('success', result)
     } catch (err) {
       ctx.dblog.info('article: article is not exist')
       // 用户校验错误
@@ -48,14 +51,16 @@ const article = {
         }
       }
     })
-    // try {
-    //   const result = await literatureService.article.create(schema)
-    //   console.log('result', result)
-    //   const {...article} = result._doc
-    //   ctx.body = util.handleResult('success', article)
-    // } catch (err) {
-    //   ctx.body = util.handleResult('fail', null, err.message || '创建文章失败')
-    // }
+    // console.log('schema', schema)
+    try {
+      const result = await literatureService.article.create(schema)
+      // console.log('result', result, result._doc)
+      // const {...article} = result._doc
+      const article = util.formatObjectKeyFromlineToCamel(result._doc)
+      ctx.body = util.handleResult('success', article)
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err.message || '创建文章失败')
+    }
   }
 }
 
