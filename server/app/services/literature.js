@@ -42,24 +42,7 @@ const article = {
     if (!title) {
       return null
     }
-    const doc = {title}
-    Object.keys(rest).forEach(v => {
-      if (rest[v]) {
-        switch (v) {
-          case 'tagIds':
-            doc['tag_ids'] = rest[v]
-            break
-          case 'categoryIds':
-            doc['category_ids'] = rest[v]
-            break
-          case 'mainCategoryId':
-            doc['main_category_id'] = rest[v]
-            break            
-          default:
-            doc[v] = rest[v]
-        }
-      }      
-    })
+    const doc = {title, ...rest}   
     console.log('doc', doc)
     let newUser = new ArticleModel(doc)
     return newUser.save()

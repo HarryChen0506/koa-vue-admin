@@ -29,19 +29,38 @@ const article = {
       ctx.body = util.handleResult('fail', null, err)
       return
     }
-    try {
-      const result = await literatureService.article.create({title, ...rest})
-      const {...article} = result._doc
-      ctx.body = util.handleResult('success', article)
-    } catch (err) {
-      ctx.body = util.handleResult('fail', null, err.message || '创建文章失败')
-    }
+    // 字段转换
+    const schema = {title}
+    Object.keys(rest).forEach(v => {
+      if (rest[v]) {
+        switch (v) {
+        case 'tagIds':
+          schema['tag_ids'] = rest[v]
+          break
+        case 'categoryIds':
+          schema['category_ids'] = rest[v]
+          break
+        case 'mainCategoryId':
+          schema['main_category_id'] = rest[v]
+          break
+        default:
+          schema[v] = rest[v]
+        }
+      }
+    })
+    // try {
+    //   const result = await literatureService.article.create(schema)
+    //   console.log('result', result)
+    //   const {...article} = result._doc
+    //   ctx.body = util.handleResult('success', article)
+    // } catch (err) {
+    //   ctx.body = util.handleResult('fail', null, err.message || '创建文章失败')
+    // }
   }
 }
 
 // 章节管理
 const chapter = {
-
 }
 
 module.exports = {

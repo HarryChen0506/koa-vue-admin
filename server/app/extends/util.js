@@ -58,5 +58,14 @@ module.exports = {
       }
     }
     return s.join('')
+  },
+  // 下划线转驼峰命名
+  underlineToCamel: function (name) {
+    return name.replace(/_(\w)/g, function (all, letter) {
+      return letter.toUpperCase()
+    })
+  },
+  camelToUnderline: function (name) {
+    return name.replace(/([A-Z])/g, '_$1').toLowerCase()
   }
 }
