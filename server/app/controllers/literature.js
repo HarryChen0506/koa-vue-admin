@@ -61,7 +61,49 @@ const article = {
     } catch (err) {
       ctx.body = util.handleResult('fail', null, err.message || '创建文章失败')
     }
+  },
+  async put (ctx, next) {
+    const {request} = ctx
+    const {id, ...rest} = request.body
+    try {
+      ctx.validate({
+        id: 'string'
+      }, {id})
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err)
+      return
+    }
+    // 字段转换
+    const schema = {_id: id, ...rest}
+    Object.keys(rest).forEach(v => {
+      if (rest[v]) {
+        switch (v) {
+        case 'tagIds':
+          schema['tag_ids'] = rest[v]
+          break
+        case 'categoryIds':
+          schema['category_ids'] = rest[v]
+          break
+        case 'mainCategoryId':
+          schema['main_category_id'] = rest[v]
+          break
+        default:
+          schema[v] = rest[v]
+        }
+      }
+    })
+    try {
+      const result = await literatureService.article.update(schema)
+      if (result) {
+        ctx.body = util.handleResult('success', result)
+      } else {
+        ctx.body = util.handleResult('fail', null, '更新角色失败')
+      }
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err.message || '更新角色失败')
+    }
   }
+  
 }
 
 // 章节管理

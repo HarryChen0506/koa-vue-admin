@@ -46,6 +46,11 @@ const article = {
     // console.log('doc', doc)
     let newUser = new ArticleModel(doc)
     return newUser.save()
+  },
+  async update (schema = {}) {
+    let {_id, ...rest} = schema
+
+    return ArticleModel.findOneAndUpdate({_id}, {$set: {...rest}})
   }
 }
 module.exports = {

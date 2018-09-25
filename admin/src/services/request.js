@@ -61,7 +61,10 @@ const literature = {
 			const path = '/proxy/api/literature/article'
 			return http.httpPost(path, data)
 		},
-		
+		updateArticle: function (data) {
+			const path = '/proxy/api/literature/article'
+			return http.httpPut(path, data)
+		}
 	}
 }
 

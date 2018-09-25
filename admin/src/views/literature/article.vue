@@ -331,7 +331,14 @@ export default {
       const {title, writers, coverUrl, country, abstract, tagIds, categoryIds, mainCategoryId} = model
       const postData = {title, writers, coverUrl, country, abstract, tagIds, categoryIds, mainCategoryId} 
       return postData
-    },
+		},
+		putData: function () {
+			const { dialog = {} } = this
+			const {model = {}} = dialog
+			const {id, title, writers, coverUrl, country, abstract, tagIds, categoryIds, mainCategoryId} = model
+      const putData = {id, title, writers, coverUrl, country, abstract, tagIds, categoryIds, mainCategoryId} 
+      return putData
+		}
 	},
 	mounted () {
 		this.search()
@@ -391,15 +398,19 @@ export default {
 			this.dialog.type = 'edit'
 			this.dialog.title = '编辑用户'	
 			this.dialog.model = util.deepClone(this.dialog.initData)		
-			this.parseUserData(item, this.dialog.model)
+			this.parseFetchData(item, this.dialog.model)
 		},
-		parseUserData (item = {}, model) {
-			const {_id, username, role = [], avatar} = item
-			model.id = _id
-			model.username = username
-			model.role = role.map(v => v._id)
-			model.avatar = avatar
-			model.stock = util.deepClone(item)	
+		parseFetchData (item = {}, model) {
+			const {Id, title, writers, coverUrl, country, abstract, tagIds, categoryIds, mainCategoryId} = item
+			model.id = Id
+			model.title = title
+			model.writers = writers
+			model.coverUrl = coverUrl
+			model.country = country
+			model.abstract = abstract
+			model.tagIds = tagIds
+			model.categoryIds = categoryIds
+			model.mainCategoryId = mainCategoryId
 		},
 		getCoverImage (data) {
 			this.dialog.model.coverUrl = data.pictureUrl
@@ -416,7 +427,7 @@ export default {
 			if (type === 'create') {
 				this.createArticle()
 			} else if (type === 'edit') {
-				this.editUser()
+				this.editArticle()
 			}
 		},
 		createArticle () {
@@ -432,21 +443,20 @@ export default {
 				this.$message.error(err || '创建文章失败')
 			})
 		},
-		editUser () {
-			this.http_edit_user(() => {
+		editArticle () {
+			this.http_edit_article(() => {
 				this.$message({
 					showClose: true,
-					message: '修改用户成功',
+					message: '修改文章成功',
 					type: 'success'
 				})
 				this.query()
 				this.closeDialog()
 			}, err => {
-				this.$message.error(err || '修改用户失败')
+				this.$message.error(err || '修改文章失败')
 			})
 		},
-		async http_create_article (sucNext, failNext) {
-			
+		async http_create_article (sucNext, failNext) {			
 			const postData = this.postData
 			console.log('postData', postData)
 			try {
@@ -461,35 +471,17 @@ export default {
 				typeof failNext === 'function' && failNext(err)
       }   
 		},
-		async http_edit_user (sucNext, failNext) {
-			const {id, username, changePassword, newPassword, role, avatar, stock} = this.dialog.model
-			const putData = {id, role}
-			if (changePassword) {
-				putData.password = newPassword
-			}
-			if (username !== stock.username) {
-				putData.username = username
-			}
-			if (avatar !== stock.avatar) {
-				putData.avatar = avatar
-			}
-			try {
-        const result = await request.user.updateUser(putData) 
-				const {data} = result
-				if (data.success) {
-					typeof sucNext === 'function' && sucNext(data)
-				} else {
-					typeof failNext === 'function' && failNext(data)
-				}		
-      } catch (err) {
-				typeof failNext === 'function' && failNext(err)
-      }   
+		async http_edit_article (sucNext, failNext) {
+			const putData = this.putData
+			console.log('putData', putData)
+			// return
+			this.http_update_article(putData, sucNext, failNext)  
 		},
-		async http_update_user (data, sucNext, failNext) {
+		async http_update_article (data, sucNext, failNext) {
 			const {id, ...rest} = data
 			const putData = {id, ...rest}
 			try {
-        const result = await request.user.updateUser(putData) 
+        const result = await request.literature.article.updateArticle(putData) 
 				const {data} = result
 				if (data.success) {
 					typeof sucNext === 'function' && sucNext(data)
