@@ -3,6 +3,7 @@
 // const config = require('../config/index.js')()
 const ArticleModel = require('../models/article.js')()
 const ArticleCatModel = require('../models/articleCat.js')()
+const ArticleTagModel = require('../models/articleTag.js')()
 const article = {
   async getArticleByParams (params = {}) {
     // const {username, nickname, id} = params
@@ -128,7 +129,79 @@ const category = {
     return ArticleCatModel.findOneAndUpdate({_id}, {$set: {...rest}}, {new: true})
   }
 }
+const tag = {
+  async getTagByParams (params = {}) {
+    // const {username, nickname, id} = params
+    let {pageSize = 10, pageNum = 1, ...rest} = params
+    pageSize = parseInt(pageSize)
+    pageNum = parseInt(pageNum)
+
+    const query = {}
+    Object.keys(rest).forEach(v => {
+      if (params[v]) {
+        if (v === 'id') {
+          query['_id'] = params[v]
+        } else if (v === 'tagname') {
+          // 模糊查询
+          query['tagname'] = {$regex: params[v]}
+        } else if (v === 'delete') {
+          const code = parseInt(params[v])
+          if (code === 0) {
+            query['delete'] = {$in: [0, null]}
+          } else {
+            query['delete'] = code
+          }
+        } else {
+          query[v] = params[v]
+        }
+      }
+    })
+    // console.log('query', query)
+    const skipNum = (pageNum - 1) * pageSize
+    const sort = {'create_time': 1}
+
+    const total = await ArticleTagModel.find(query).count()
+    const list = await ArticleTagModel
+      .find(query, {password: 0})
+      .skip(skipNum).limit(pageSize).sort(sort)
+
+    return {
+      list,
+      total
+    }
+  },
+  async getAllTags (query = {}) {
+    query.delete = 0
+    const sort = {'create_time': 1}
+    const total = await ArticleTagModel.find(query).count()
+    const list = await ArticleTagModel.find(query, {delete: 0}).sort(sort)
+    return {
+      list,
+      total
+    }
+  },
+  async create (schema = {}) {
+    let {tagname, ...rest} = schema
+    if (!tagname) {
+      return null
+    }
+    try {
+      const isExist = await ArticleTagModel.find({tagname})
+      // console.log('isExist', isExist)
+      if (isExist.length > 0) {
+        throw new Error('该标签名已存在')
+      }
+    } catch (err) {
+      throw err
+    }
+    const doc = {tagname, ...rest}
+    // console.log('doc', doc)
+    let newTag = new ArticleTagModel(doc)
+    return newTag.save()
+  }
+}
 module.exports = {
   article,
-  category
+  category,
+  tag
 }

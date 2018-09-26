@@ -173,6 +173,78 @@ const category = {
   }
 }
 
+const tag = {
+  async list (ctx, next) {
+    const {query} = ctx
+    // console.log('query', query)
+    try {
+      const result = await literatureService.tag.getTagByParams(query)
+      result.list = result.list.map(v => {
+        return util.formatObjectKeyFromlineToCamel(v._doc)
+      })
+      ctx.dblog.info('literature: tag query success')
+      ctx.body = util.handleResult('success', result)
+    } catch (err) {
+      ctx.dblog.info('literature: tag is not exist')
+      console.log('err', err)
+      // 用户校验错误
+      ctx.body = util.handleResult('fail', null, err || '文章标签不存在')
+    }
+  },
+  async all (ctx, next) {
+    const {query} = ctx
+    // console.log('query', query)
+    try {
+      const result = await literatureService.tag.getAllTags(query)
+      result.list = result.list.map(v => {
+        return util.formatObjectKeyFromlineToCamel(v._doc)
+      })
+      ctx.dblog.info('literature: tag all query success')
+      ctx.body = util.handleResult('success', result)
+    } catch (err) {
+      ctx.dblog.info('literature: tag all is not exist')
+      console.log('err', err)
+      // 用户校验错误
+      ctx.body = util.handleResult('fail', null, err || '文章标签不存在')
+    }
+  },
+  async post (ctx, next) {
+    const {request} = ctx
+    const {tagname, ...rest} = request.body
+    try {
+      ctx.validate({
+        tagname: 'string'
+      }, {tagname})
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err)
+      return
+    }
+    // 字段转换
+    const schema = {tagname}
+    Object.keys(rest).forEach(v => {
+      if (rest[v]) {
+        switch (v) {
+        case 'tagParentId':
+          schema['tag_parent_id'] = rest[v]
+          break
+        default:
+          schema[v] = rest[v]
+        }
+      }
+    })
+    try {
+      const result = await literatureService.tag.create(schema)
+      // console.log('result', result, result._doc)
+      // const {...article} = result._doc
+      const tag = util.formatObjectKeyFromlineToCamel(result._doc)
+      ctx.body = util.handleResult('success', tag)
+    } catch (err) {
+      // console.log('err', err.message)
+      ctx.body = util.handleResult('fail', null, err.message || '创建分类失败')
+    }
+  }
+}
+
 // 章节管理
 const chapter = {
 }
@@ -180,5 +252,6 @@ const chapter = {
 module.exports = {
   article,
   category,
+  tag,
   chapter
 }

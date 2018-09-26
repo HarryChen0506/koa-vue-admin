@@ -61,10 +61,10 @@ const role = {
       const isExist = await RoleModel.find({$or: [{rolename}, {rolecode}]})
       // console.log('isExist', isExist)
       if (isExist.length > 0) {
-        throw '该角色名或角色码已存在'
+        throw new Error('该角色名或角色码已存在')
       }
     } catch (err) {
-      throw new Error(err)
+      throw err
     }
 
     let newUser = new RoleModel({rolename, rolecode, ...rest})

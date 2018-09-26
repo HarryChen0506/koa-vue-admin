@@ -13,5 +13,7 @@ router.put('/article', literatureCtr.article.put)
 router.get('/category/list', literatureCtr.category.list)
 router.post('/category', literatureCtr.category.post)
 router.put('/category', literatureCtr.category.put)
-
+router.get('/tag/list', literatureCtr.tag.list)
+router.get('/tag/all', literatureCtr.tag.all)
+router.post('/tag', literatureCtr.tag.post)
 module.exports = router

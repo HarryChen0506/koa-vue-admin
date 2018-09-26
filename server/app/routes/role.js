@@ -3,7 +3,7 @@ const router = new Router({
   prefix: '/api/role'
 })
 
-const authToken = require('../middlewares/authToken.js')()
+// const authToken = require('../middlewares/authToken.js')()
 const role = require('../controllers/role')
 
 router.get('/', role.index)

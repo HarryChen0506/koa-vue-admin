@@ -259,7 +259,7 @@
       v-if="dialog_add_tag.visible"
       title="新增标签"
       :visible.sync="dialog_add_tag.visible"
-      width="50%" center>
+      width="30%" center>
         <el-form  @submit.native.prevent class="demo-form-inline">
           <el-form-item label="标签级">
             <el-select v-model="dialog_add_tag.model.level" 
@@ -533,7 +533,7 @@ export default {
       this.$refs.tree.filter(val)
 		},
 		tagList (val) {
-      // console.log('watch labelList', val)
+      console.log('watch labelList', val)
       // 将接口数据转换成树模型
 			this.dialog_manage_tag.model.data = this.formatLabelTree(val)
 			console.log('this.dialog_manage_tag.model.data', this.dialog_manage_tag.model.data)
@@ -541,7 +541,7 @@ export default {
 	},
 	mounted () {
 		this.search()
-		this.queryAllRoles()
+		this.queryAllTags()		
 	},
   methods: {
 		search () {
@@ -565,20 +565,20 @@ export default {
 				console.log(err)
 				this.$message.error('获取用户列表失败!')
       }      
-		},
-		async queryAllRoles () {
+		},		
+		async queryAllTags () {
 			try {
-        const result = await request.role.getAllRoles()  
+        const result = await request.literature.tag.getAllTags ()  
 				const {data} = result
-				console.log('data', data)
+				// console.log('data', data)
 				if (data.success) {
-					this.staticModel.roleList = data.result.list
+					this.tagList = data.result.list
 				}				
       } catch (err) {
 				console.log(err)
-				this.$message.error('获取角色列表失败!')
-      }     
-		},
+				this.$message.error('获取标签列表失败!')
+      }
+    },
 		handleCurrentChange () {
 			this.query()
 		},
@@ -711,17 +711,16 @@ export default {
 		},
 		// 标签相关
 		openManageTagDialog () {
-			this.dialog_manage_tag.visible = true
-			this.tagList = mockData
+			this.dialog_manage_tag.visible = true			
 		},
 		formatLabelTree (list = []) {
       const result = []
       list.forEach(v => {
         if (!v.tagParentId) {
           const parentLabel = {
-            id: v.tagId,
+            id: v.Id,
             level: 1,
-            label: v.tagName,
+            label: v.tagname,
             children: []
           }
           result.push(parentLabel)
@@ -731,9 +730,9 @@ export default {
         list.forEach(j => {
           if (j.tagParentId === k.id) {
             const label = {
-              id: j.tagId,
+              id: j.Id,
               level: 2,
-              label: j.tagName,
+              label: j.tagname,
               children: []
             }
             k.children.push(label)
@@ -823,26 +822,37 @@ export default {
       // tagParentId tagId tagName
       let postData = {}
       if (level === 1) {
-        postData = {tagName: labelName}
+        postData = {tagname: labelName}
       } else if (level === 2) {
-        postData = {tagParentId: data.id, tagName: labelName}
+        postData = {tagParentId: data.id, tagname: labelName}
 			}
 			console.log('postData', postData)
-			return
-      this.httpPostLabel(postData, (res) => {
-        if (res.data.status === 'success') {
-          this.$message({
-            showClose: true,
-            message: '添加标签成功',
-            type: 'success'
-          })
-          this.queryTagList()
-          this.closeDialog_add_tag()
-        } else {
-					this.$message.error(err || '添加标签失败')
-        }
-      })
-    }
+			this.http_create_tag(postData, () => {
+				this.$message({
+					showClose: true,
+					message: '创建标签成功',
+					type: 'success'
+				})
+				this.queryAllTags()
+				this.closeDialog_add_tag()
+			}, err => {
+				this.$message.error(err || '创建标签失败')
+			})
+		},
+		async http_create_tag (postData, sucNext, failNext) {	
+			// console.log('postData', postData)
+			try {
+        const result = await request.literature.tag.createTag(postData) 
+				const {data} = result
+				if (data.success) {
+					typeof sucNext === 'function' && sucNext(data)
+				} else {
+					typeof failNext === 'function' && failNext(data)
+				}		
+      } catch (err) {
+				typeof failNext === 'function' && failNext(err)
+      }   
+		},
   }
 }
 </script>

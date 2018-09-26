@@ -80,7 +80,18 @@ const literature = {
 			const path = '/proxy/api/literature/category'
 			return http.httpPut(path, data)
 		}
-	}	
+	},
+	tag: {
+		getAllTags: function (option = {}) {
+			const path = '/proxy/api/literature/tag/all'
+			const url = util.formatUrl(path, option)
+			return http.httpGet(url)
+		},
+		createTag:  function (data) {
+			const path = '/proxy/api/literature/tag'
+			return http.httpPost(path, data)
+		},
+	}
 }
 
 export default  {    
