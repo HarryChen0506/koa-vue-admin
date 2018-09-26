@@ -35,9 +35,9 @@ const user = {
 
     const total = await UserModel.find(query).count()
     const list = await UserModel
-                        .find(query, {password: 0})
-                        .populate({path: 'role', match: {active: 1}, select: {rolename: 1}})
-                        .skip(skipNum).limit(pageSize).sort(sort)
+      .find(query, {password: 0})
+      .populate({path: 'role', match: {active: 1}, select: {rolename: 1}})
+      .skip(skipNum).limit(pageSize).sort(sort)
 
     return {
       list,

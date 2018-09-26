@@ -10,5 +10,8 @@ const literatureCtr = require('../controllers/literature')
 router.get('/article/list', literatureCtr.article.list)
 router.post('/article', literatureCtr.article.post)
 router.put('/article', literatureCtr.article.put)
+router.get('/category/list', literatureCtr.category.list)
+router.post('/category', literatureCtr.category.post)
+router.put('/category', literatureCtr.category.put)
 
 module.exports = router

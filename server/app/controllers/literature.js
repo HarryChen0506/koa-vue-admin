@@ -103,7 +103,74 @@ const article = {
       ctx.body = util.handleResult('fail', null, err.message || '更新角色失败')
     }
   }
-  
+}
+
+const category = {
+  async list (ctx, next) {
+    const {query} = ctx
+    // console.log('query', query)
+    try {
+      const result = await literatureService.category.getCategoryByParams(query)
+      result.list = result.list.map(v => {
+        return util.formatObjectKeyFromlineToCamel(v._doc)
+      })
+      ctx.dblog.info('literature: category query success')
+      ctx.body = util.handleResult('success', result)
+    } catch (err) {
+      ctx.dblog.info('literature: category is not exist')
+      console.log('err', err)
+      // 用户校验错误
+      ctx.body = util.handleResult('fail', null, err || '文章分类不存在')
+    }
+  },
+  async post (ctx, next) {
+    const {request} = ctx
+    const {categoryname} = request.body
+    try {
+      ctx.validate({
+        categoryname: 'string'
+      }, {categoryname})
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err)
+      return
+    }
+    // 字段转换
+    const schema = {categoryname}
+    try {
+      const result = await literatureService.category.create(schema)
+      // console.log('result', result, result._doc)
+      // const {...article} = result._doc
+      const category = util.formatObjectKeyFromlineToCamel(result._doc)
+      ctx.body = util.handleResult('success', category)
+    } catch (err) {
+      // console.log('err', err.message)
+      ctx.body = util.handleResult('fail', null, err.message || '创建分类失败')
+    }
+  },
+  async put (ctx, next) {
+    const {request} = ctx
+    const {id, ...rest} = request.body
+    try {
+      ctx.validate({
+        id: 'string'
+      }, {id})
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err)
+      return
+    }
+    // 字段转换
+    const schema = {_id: id, ...rest}
+    try {
+      const result = await literatureService.category.update(schema)
+      if (result) {
+        ctx.body = util.handleResult('success', result)
+      } else {
+        ctx.body = util.handleResult('fail', null, '更新分类失败')
+      }
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err.message || '更新分类失败')
+    }
+  }
 }
 
 // 章节管理
@@ -112,5 +179,6 @@ const chapter = {
 
 module.exports = {
   article,
+  category,
   chapter
 }

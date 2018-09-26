@@ -111,7 +111,7 @@
 		</section>
 		<section>
 			<el-button 
-				style="position: fixed; right: 40px; bottom: 40px" 
+				style="position: fixed; right: 40px; bottom: 40px; z-index: 10" 
 				type="danger" 
 				icon="el-icon-plus" 
 				@click="openCreateDialog"

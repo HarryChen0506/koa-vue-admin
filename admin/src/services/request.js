@@ -65,7 +65,22 @@ const literature = {
 			const path = '/proxy/api/literature/article'
 			return http.httpPut(path, data)
 		}
-	}
+	},
+	category: {
+		getCategoryByParams: function (option = {}) {			
+			const path = '/proxy/api/literature/category/list'
+			const url = util.formatUrl(path, option)
+			return http.httpGet(url)
+		},
+		createCategory: function (data) {
+			const path = '/proxy/api/literature/category'
+			return http.httpPost(path, data)
+		},
+		updateCategory: function (data) {
+			const path = '/proxy/api/literature/category'
+			return http.httpPut(path, data)
+		}
+	}	
 }
 
 export default  {    

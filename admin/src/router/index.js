@@ -88,7 +88,8 @@ export default new Router({
           name: 'upload',
           meta: {title: '上传', icon: 'icon-cloud-upload'},
           component: Upload
-        }, {
+        }, 
+        {
           path: 'richtext',
           name: 'richtext',
           meta: {title: '富文本', icon: 'icon-underline'},
@@ -107,6 +108,12 @@ export default new Router({
           name: 'article',
           meta: {title: '文章', icon: 'icon-table'},
           component:  () => import('@/views/literature/article.vue')
+        },
+        {
+          path: 'category',
+          name: 'category',
+          meta: {title: '分类', icon: 'icon-th-list'},
+          component:  () => import('@/views/literature/category.vue')
         }
       ]
     }
