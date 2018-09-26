@@ -378,7 +378,7 @@ export default {
 					type: 'success'
 				})
 				this.query()
-			}, (data) => {
+			}, (err) => {
 				this.$message.error(err || '恢复失败')
 			})
 		},
@@ -395,7 +395,7 @@ export default {
             type: 'success'
           })
           this.query()
-        }, (data) => {
+        }, (err) => {
           this.$message.error(err || '删除失败')
         })
       }).catch(_ => {})

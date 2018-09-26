@@ -25,6 +25,10 @@
 				<el-form-item>
 					<el-button type="primary" @click="search">查询</el-button>
 				</el-form-item>
+				<el-form-item style="float: right">
+					<el-button type="primary" icon="el-icon-setting" size="mini"
+						@click="openManageTagDialog()">标签管理</el-button>
+				</el-form-item>
 			</el-form>
 		</section>
 		<section class="main shadow">
@@ -116,7 +120,7 @@
 				icon="el-icon-plus" 
 				@click="openCreateDialog"
 				circle ></el-button>
-		</section>
+		</section>	
     <el-dialog
       v-if="dialog.visible"
       :title="dialog.title"
@@ -192,6 +196,102 @@
         <el-button type="primary" @click="dialogConfirm" >确 定</el-button>
       </span>
     </el-dialog>
+		<!-- 标签管理 -->
+		<el-dialog
+      v-if="dialog_manage_tag.visible"
+      title="标签管理"
+      :visible.sync="dialog_manage_tag.visible"
+      width="50%" center>
+      <!-- <el-input
+        placeholder="输入关键字进行过滤"
+        style="width: 200px"
+        v-model="dialog_manage_model.filterText">
+      </el-input> -->
+      <el-select v-model="dialog_manage_tag.model.filterText" clearable placeholder="请选择" size="mini" style="width: 200px;">
+        <el-option
+          v-for="item in dialog_manage_tag.model.data"
+          :key="item.id"
+          :label="item.tagname"
+          :value="item.tagname">
+        </el-option>
+      </el-select>
+      <span style="float: right">
+        <el-button type="primary" size="mini" @click="openCreateLabelDialog('new')">
+          <i class="el-icon-plus el-icon--left"> 新增标签</i>
+        </el-button>
+      </span>  
+      <el-tree
+        style="margin-top: 20px"
+        :data="dialog_manage_tag.model.data"
+        node-key="id"
+        default-expand-all
+        ref="tree"
+        :filter-node-method="filterNode"
+        :expand-on-click-node="false">
+        <span class="custom-tree-node" slot-scope="{ node, data }">
+          <span>{{ node.label }}</span>
+          <span>
+            <el-button
+              style="margin-left: 10px"
+              v-if="data.level === 1"
+              type="text"
+              size="mini"
+              @click="() => openCreateLabelDialog('append', node, data)">
+              <i class="el-icon-circle-plus-outline"></i>              
+            </el-button>
+            <el-button
+              style="margin-left: 10px"
+              type="text"
+              size="mini"
+              @click="() => removeNode(node, data)">
+              <i class="el-icon-delete"></i>
+            </el-button>
+          </span>
+        </span>
+      </el-tree>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog_manage_tag">取 消</el-button>
+        <el-button type="primary" @click="dialogConfirm_manage_tag" >确 定</el-button>
+      </span>
+    </el-dialog>
+		<!-- 新增标签 -->
+		<el-dialog
+      v-if="dialog_add_tag.visible"
+      title="新增标签"
+      :visible.sync="dialog_add_tag.visible"
+      width="50%" center>
+        <el-form  @submit.native.prevent class="demo-form-inline">
+          <el-form-item label="标签级">
+            <el-select v-model="dialog_add_tag.model.level" 
+              :disabled="dialog_add_tag.type === 'new'" clearable placeholder="请选择" size="mini" style="width: 200px;">
+              <el-option
+                v-for="item in staticModel.addLabelLevel"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item> 
+          <el-form-item label="添加到">
+            <span>{{dialog_add_tag.model.addTo}}</span>
+          </el-form-item>
+          <el-form-item label="新标签名称">            
+            <el-input 
+              style="width: 200px"
+              placeholder="新标签名称"
+              size="mini"
+              v-model.lazy="dialog_add_tag.model.labelName"
+              @blur="query"
+              clearable
+            >
+            </el-input>
+          </el-form-item> 
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="closeDialog_add_tag">取 消</el-button>
+          <el-button type="primary" @click="dialogConfirm_add_tag" >确 定</el-button>
+        </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -262,7 +362,29 @@ import util from '@/utils/util'
 import request from '@/services/request'
 import ImageUpload from '@/components/ImageUpload'
 moment.locale('zh-cn')
-
+const mockData =  [
+	{
+		"tagId": "184990807068823552",
+		"tagName": "一级标签2"
+	}, {
+		"tagId": "184991223437381632",
+		"tagName": "一级标签3"
+	}, {
+		"tagId": "185044338278715392",
+		"tagName": "一级标签4"
+	}, {
+		"tagId": "185044960168169472",
+		"tagName": "一级标签5"
+	}, {
+		"tagId": "185045007886766080",
+		"tagParentId": "185044960168169472",
+		"tagName": "二级标签5-1"
+	}, {
+		"tagId": "185045793203081216",
+		"tagParentId": "184991223437381632",
+		"tagName": "二级标签3-1"
+	}
+]
 export default {
 	name: 'user',
 	components: {
@@ -289,9 +411,14 @@ export default {
 				// 	"__v": 0
 				// }
 			],
+			tagList: [], // 数据库标签列表
 			staticModel: {
 				categoryList: [],
-				tagList: []
+				tagList: [],
+				addLabelLevel: [
+          { name: '一级', value: 1},
+          { name: '二级', value: 2}
+        ]
 			},
 			dialog: {
 				type: '',
@@ -321,6 +448,67 @@ export default {
 					categoryIds: [], // 分类
 					mainCategoryId: '', // 主分类
 				}
+			},
+			dialog_manage_tag : {
+				type: '',
+				title: '管理标签',
+				visible: false,
+				initData: {
+					data: [],
+        	filterText: ''
+				},
+				model: {
+					data: [
+						{
+							label: '一级 1',
+							children: [{
+								label: '二级 1-1',
+								children: [{
+									label: '三级 1-1-1'
+								}]
+							}]
+						}, 
+						{
+							label: '一级 2',
+							children: [
+								{
+									label: '二级 2-1',
+									children: [{
+										label: '三级 2-1-1'
+									}]
+								}, 
+								{
+									label: '二级 2-2',
+									children: [{
+										label: '三级 2-2-1'
+									}]
+								}
+							]
+						}
+					],
+        	filterText: ''
+				}
+			},
+			dialog_add_tag: {
+				type: '', // 'new'：新建一级 'append'：追加
+				title: '添加标签',
+				visible: false,
+				initData: {
+					type: 'append',
+					level: 2,
+					tagname: '',
+					addTo: '',
+					currentData: {},
+					currentNode: {}
+				},
+				model: {
+					type: 'append',
+					level: 2,
+					tagname: '',
+					addTo: '',
+					currentData: {},
+					currentNode: {}
+				}
 			}
     }
 	},
@@ -339,6 +527,17 @@ export default {
       const putData = {id, title, writers, coverUrl, country, abstract, tagIds, categoryIds, mainCategoryId} 
       return putData
 		}
+	},
+	watch: {
+		'dialog_manage_tag.model.filterText' (val) {
+      this.$refs.tree.filter(val)
+		},
+		tagList (val) {
+      // console.log('watch labelList', val)
+      // 将接口数据转换成树模型
+			this.dialog_manage_tag.model.data = this.formatLabelTree(val)
+			console.log('this.dialog_manage_tag.model.data', this.dialog_manage_tag.model.data)
+    },
 	},
 	mounted () {
 		this.search()
@@ -509,7 +708,141 @@ export default {
 			}, err => {
 				this.$message.error(err || '修改用户状态失败')
 			})
-		}
+		},
+		// 标签相关
+		openManageTagDialog () {
+			this.dialog_manage_tag.visible = true
+			this.tagList = mockData
+		},
+		formatLabelTree (list = []) {
+      const result = []
+      list.forEach(v => {
+        if (!v.tagParentId) {
+          const parentLabel = {
+            id: v.tagId,
+            level: 1,
+            label: v.tagName,
+            children: []
+          }
+          result.push(parentLabel)
+        }
+      })
+      result.forEach(k => {
+        list.forEach(j => {
+          if (j.tagParentId === k.id) {
+            const label = {
+              id: j.tagId,
+              level: 2,
+              label: j.tagName,
+              children: []
+            }
+            k.children.push(label)
+          }
+        })
+      })
+      return result
+    },
+		// 过滤树节点
+    filterNode (value, data, node) {
+      if (!value) return true
+      if (data.label.indexOf(value) !== -1) {
+        return true
+      }
+      if (node.parent.data.label && node.parent.data.label.indexOf(value) !== -1) {
+        return true
+      }
+      return false
+		},
+		// 添加标签对话框
+    openCreateLabelDialog (type, node, data) {
+      this.dialog_add_tag.visible = true
+      this.dialog_add_tag.model = util.deepClone(this.dialog_add_tag.initData)
+      this.dialog_add_tag.type = type
+      console.log('openCreateLabelDialog', data)
+      if (type === 'new') {
+        this.dialog_add_tag.model.level = 1
+        this.dialog_add_tag.addTo = ''
+      } else if (type === 'append') {
+        this.dialog_add_tag.model.currentData = data
+        this.dialog_add_tag.model.currentNode = node
+        this.dialog_add_tag.model.level = 2
+        this.dialog_add_tag.model.addTo = data.label
+      }
+    },
+		// 删除树节点
+    removeNode (node, data) {
+			const tagId = data.id
+			console.log('remove', node, data)
+			return
+      this.$confirm('确认删除该标签吗？').then(_ => {
+        this.httpDeleteLabel(tagId, (res) => {
+          const {data} = res
+          if (data.status === 'success') {
+            this.$message({
+              showClose: true,
+              message: '删除标签成功',
+              type: 'success'
+            })
+            // 刷新标签
+            this.queryLabelList()
+          } else {
+            const {error = {}} = data
+            console.log('err', error)
+            this.$message({
+              showClose: true,
+              message: error.responseMsg || '删除标签失败',
+              type: 'error'
+            })
+          }
+        })
+      }).catch(_ => {})
+    },
+		closeDialog_manage_tag () {
+      this.dialog_manage_tag.visible = false
+		},
+		dialogConfirm_manage_tag () {
+			this.closeDialog_manage_tag()
+		},
+		closeDialog_add_tag () {
+			this.dialog_add_tag.visible = false
+		},
+		dialogConfirm_add_tag () {
+			if (this.dialog_add_tag.type === 'new') {
+        this.appendLabel(this.dialog_add_tag.model.level, this.dialog_add_tag.model.data, this.dialog_add_tag.model.labelName)
+      } else if (this.dialog_add_tag.type === 'append') {
+        console.log('append')
+        this.appendLabel(this.dialog_add_tag.model.level, this.dialog_add_tag.model.currentData, this.dialog_add_tag.model.labelName)
+      }
+		},
+		/**
+     * level 标签级别
+     * data 添加到的父元素
+     * labelName 添加的标签名
+     */
+    appendLabel (level, data, labelName) {
+      // tagParentId tagId tagName
+      let postData = {}
+      if (level === 1) {
+        postData = {tagName: labelName}
+      } else if (level === 2) {
+        postData = {tagParentId: data.id, tagName: labelName}
+			}
+			console.log('postData', postData)
+			return
+      this.httpPostLabel(postData, (res) => {
+        if (res.data.status === 'success') {
+          this.$message({
+            showClose: true,
+            message: '添加标签成功',
+            type: 'success'
+          })
+          this.queryTagList()
+          this.closeDialog_add_tag()
+        } else {
+					this.$message.error(err || '添加标签失败')
+        }
+      })
+    }
   }
 }
 </script>
