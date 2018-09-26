@@ -211,8 +211,8 @@
         <el-option
           v-for="item in dialog_manage_tag.model.data"
           :key="item.id"
-          :label="item.tagname"
-          :value="item.tagname">
+          :label="item.label"
+          :value="item.label">
         </el-option>
       </el-select>
       <span style="float: right">
@@ -239,11 +239,19 @@
               @click="() => openCreateLabelDialog('append', node, data)">
               <i class="el-icon-circle-plus-outline"></i>              
             </el-button>
-            <el-button
+						<el-button
               style="margin-left: 10px"
               type="text"
               size="mini"
-              @click="() => removeNode(node, data)">
+              @click="() => openCreateLabelDialog('edit', node, data)">
+              <i class="el-icon-edit"></i>              
+            </el-button>
+            <el-button
+							v-if="data.children.length === 0"
+              style="margin-left: 10px"
+              type="text"
+              size="mini"
+              @click="() => removeLabel(node, data)">
               <i class="el-icon-delete"></i>
             </el-button>
           </span>
@@ -257,7 +265,7 @@
 		<!-- 新增标签 -->
 		<el-dialog
       v-if="dialog_add_tag.visible"
-      title="新增标签"
+      :title="dialog_add_tag.title"
       :visible.sync="dialog_add_tag.visible"
       width="30%" center>
         <el-form  @submit.native.prevent class="demo-form-inline">
@@ -272,8 +280,8 @@
               </el-option>
             </el-select>
           </el-form-item> 
-          <el-form-item label="添加到">
-            <span>{{dialog_add_tag.model.addTo}}</span>
+          <el-form-item label="添加到" v-if="dialog_add_tag.type === 'append'">
+            <el-tag size="mini">{{dialog_add_tag.model.addTo}}</el-tag>
           </el-form-item>
           <el-form-item label="新标签名称">            
             <el-input 
@@ -362,29 +370,7 @@ import util from '@/utils/util'
 import request from '@/services/request'
 import ImageUpload from '@/components/ImageUpload'
 moment.locale('zh-cn')
-const mockData =  [
-	{
-		"tagId": "184990807068823552",
-		"tagName": "一级标签2"
-	}, {
-		"tagId": "184991223437381632",
-		"tagName": "一级标签3"
-	}, {
-		"tagId": "185044338278715392",
-		"tagName": "一级标签4"
-	}, {
-		"tagId": "185044960168169472",
-		"tagName": "一级标签5"
-	}, {
-		"tagId": "185045007886766080",
-		"tagParentId": "185044960168169472",
-		"tagName": "二级标签5-1"
-	}, {
-		"tagId": "185045793203081216",
-		"tagParentId": "184991223437381632",
-		"tagName": "二级标签3-1"
-	}
-]
+
 export default {
 	name: 'user',
 	components: {
@@ -455,38 +441,11 @@ export default {
 				visible: false,
 				initData: {
 					data: [],
-        	filterText: ''
+					filterText: ''
 				},
 				model: {
-					data: [
-						{
-							label: '一级 1',
-							children: [{
-								label: '二级 1-1',
-								children: [{
-									label: '三级 1-1-1'
-								}]
-							}]
-						}, 
-						{
-							label: '一级 2',
-							children: [
-								{
-									label: '二级 2-1',
-									children: [{
-										label: '三级 2-1-1'
-									}]
-								}, 
-								{
-									label: '二级 2-2',
-									children: [{
-										label: '三级 2-2-1'
-									}]
-								}
-							]
-						}
-					],
-        	filterText: ''
+					data: [],
+					filterText: ''
 				}
 			},
 			dialog_add_tag: {
@@ -496,7 +455,7 @@ export default {
 				initData: {
 					type: 'append',
 					level: 2,
-					tagname: '',
+					labelName: '',
 					addTo: '',
 					currentData: {},
 					currentNode: {}
@@ -504,7 +463,7 @@ export default {
 				model: {
 					type: 'append',
 					level: 2,
-					tagname: '',
+					labelName: '',
 					addTo: '',
 					currentData: {},
 					currentNode: {}
@@ -533,10 +492,9 @@ export default {
       this.$refs.tree.filter(val)
 		},
 		tagList (val) {
-      console.log('watch labelList', val)
+      // console.log('watch labelList', val)
       // 将接口数据转换成树模型
 			this.dialog_manage_tag.model.data = this.formatLabelTree(val)
-			console.log('this.dialog_manage_tag.model.data', this.dialog_manage_tag.model.data)
     },
 	},
 	mounted () {
@@ -759,43 +717,23 @@ export default {
       this.dialog_add_tag.type = type
       console.log('openCreateLabelDialog', data)
       if (type === 'new') {
+				this.dialog_add_tag.title = '新增标签'
         this.dialog_add_tag.model.level = 1
         this.dialog_add_tag.addTo = ''
       } else if (type === 'append') {
+				this.dialog_add_tag.title = '新增标签'
         this.dialog_add_tag.model.currentData = data
         this.dialog_add_tag.model.currentNode = node
         this.dialog_add_tag.model.level = 2
         this.dialog_add_tag.model.addTo = data.label
-      }
-    },
-		// 删除树节点
-    removeNode (node, data) {
-			const tagId = data.id
-			console.log('remove', node, data)
-			return
-      this.$confirm('确认删除该标签吗？').then(_ => {
-        this.httpDeleteLabel(tagId, (res) => {
-          const {data} = res
-          if (data.status === 'success') {
-            this.$message({
-              showClose: true,
-              message: '删除标签成功',
-              type: 'success'
-            })
-            // 刷新标签
-            this.queryLabelList()
-          } else {
-            const {error = {}} = data
-            console.log('err', error)
-            this.$message({
-              showClose: true,
-              message: error.responseMsg || '删除标签失败',
-              type: 'error'
-            })
-          }
-        })
-      }).catch(_ => {})
-    },
+      } else if (type === 'edit') {
+				console.log('openCreateLabelDialog', data)
+				this.dialog_add_tag.title = '编辑标签'
+				this.dialog_add_tag.model.currentData = data
+        this.dialog_add_tag.model.currentNode = node
+        this.dialog_add_tag.model.labelName = data.label
+			}
+    },		
 		closeDialog_manage_tag () {
       this.dialog_manage_tag.visible = false
 		},
@@ -809,9 +747,10 @@ export default {
 			if (this.dialog_add_tag.type === 'new') {
         this.appendLabel(this.dialog_add_tag.model.level, this.dialog_add_tag.model.data, this.dialog_add_tag.model.labelName)
       } else if (this.dialog_add_tag.type === 'append') {
-        console.log('append')
         this.appendLabel(this.dialog_add_tag.model.level, this.dialog_add_tag.model.currentData, this.dialog_add_tag.model.labelName)
-      }
+      } else if (this.dialog_add_tag.type === 'edit') {        
+				this.updateLabel(this.dialog_add_tag.model.currentData, this.dialog_add_tag.model.labelName)
+			}
 		},
 		/**
      * level 标签级别
@@ -853,6 +792,54 @@ export default {
 				typeof failNext === 'function' && failNext(err)
       }   
 		},
+		updateLabel (data, labelName) {
+      const putData = {id: data.id, tagname: labelName}			
+			this.http_update_tag(putData, () => {
+				this.$message({
+					showClose: true,
+					message: '编辑标签成功',
+					type: 'success'
+				})
+				this.queryAllTags()
+				this.closeDialog_add_tag()
+			}, err => {
+				this.$message.error(err || '编辑标签失败')
+			})
+		},
+		async http_update_tag (putData, sucNext, failNext) {	
+			try {
+        const result = await request.literature.tag.updateTag(putData) 
+				const {data} = result
+				if (data.success) {
+					typeof sucNext === 'function' && sucNext(data)
+				} else {
+					typeof failNext === 'function' && failNext(data)
+				}		
+      } catch (err) {
+				typeof failNext === 'function' && failNext(err)
+      }   
+		},
+		// 删除树节点
+    removeLabel (node, data) {
+			// console.log('remove', node, data)
+			const putData = {id: data.id, delete: 1}
+      this.$confirm('确认删除该标签吗？').then(() => {
+				this.http_delete_tag(putData, () => {
+					this.$message({
+						showClose: true,
+						message: '删除标签成功',
+						type: 'success'
+					})
+					this.queryAllTags()
+					this.closeDialog_add_tag()
+				}, err => {
+					this.$message.error(err || '删除标签失败')
+				})
+      }).catch(() => {})
+		},
+		async http_delete_tag (putData, sucNext, failNext) {
+			this.http_update_tag(putData, sucNext, failNext)  
+		}
   }
 }
 </script>

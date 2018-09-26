@@ -91,6 +91,10 @@ const literature = {
 			const path = '/proxy/api/literature/tag'
 			return http.httpPost(path, data)
 		},
+		updateTag: function (data) {
+			const path = '/proxy/api/literature/tag'
+			return http.httpPut(path, data)
+		}
 	}
 }
 

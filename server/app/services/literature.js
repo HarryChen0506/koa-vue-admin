@@ -198,6 +198,20 @@ const tag = {
     // console.log('doc', doc)
     let newTag = new ArticleTagModel(doc)
     return newTag.save()
+  },
+  async update (schema = {}) {
+    let {_id, ...rest} = schema
+    try {
+      const isExist = await ArticleTagModel.find({_id: {$ne: _id}, tagname: rest.tagname})
+      // console.log('isExist', isExist)
+      if (isExist.length > 0) {
+        throw new Error('该标签名已存在')
+      }
+    } catch (err) {
+      throw err
+    }
+    // {_id}, {$set: {...rest}}
+    return ArticleTagModel.findOneAndUpdate({_id}, {$set: {...rest}}, {new: true})
   }
 }
 module.exports = {

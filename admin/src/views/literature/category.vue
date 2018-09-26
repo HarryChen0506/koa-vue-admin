@@ -371,7 +371,7 @@ export default {
 				id: item.Id,
 				delete: 0
 			}
-			this.http_update_category(putData, (data) => {
+			this.http_update_category(putData, () => {
 				this.$message({
 					showClose: true,
 					message: '恢复成功',
@@ -387,8 +387,8 @@ export default {
 				id: item.Id,
 				delete: 1
 			}
-			this.$confirm('确认删除吗？').then(_ => {
-        this.http_update_category(putData, (data) => {
+			this.$confirm('确认删除吗？').then(() => {
+        this.http_update_category(putData, () => {
           this.$message({
             showClose: true,
             message: '删除成功',
@@ -398,7 +398,7 @@ export default {
         }, (err) => {
           this.$message.error(err || '删除失败')
         })
-      }).catch(_ => {})
+      }).catch(() => {})
 
 		}
   }

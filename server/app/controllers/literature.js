@@ -242,6 +242,30 @@ const tag = {
       // console.log('err', err.message)
       ctx.body = util.handleResult('fail', null, err.message || '创建分类失败')
     }
+  },
+  async put (ctx, next) {
+    const {request} = ctx
+    const {id, ...rest} = request.body
+    try {
+      ctx.validate({
+        id: 'string'
+      }, {id})
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err)
+      return
+    }
+    // 字段转换
+    const schema = {_id: id, ...rest}
+    try {
+      const result = await literatureService.tag.update(schema)
+      if (result) {
+        ctx.body = util.handleResult('success', result)
+      } else {
+        ctx.body = util.handleResult('fail', null, '更新标签失败')
+      }
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err.message || '更新标签失败')
+    }
   }
 }
 

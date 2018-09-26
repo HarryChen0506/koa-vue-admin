@@ -16,4 +16,5 @@ router.put('/category', literatureCtr.category.put)
 router.get('/tag/list', literatureCtr.tag.list)
 router.get('/tag/all', literatureCtr.tag.all)
 router.post('/tag', literatureCtr.tag.post)
+router.put('/tag', literatureCtr.tag.put)
 module.exports = router
