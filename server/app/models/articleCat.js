@@ -7,7 +7,9 @@ module.exports = (app) => {
   const Schema = mongoose.Schema
   const ArticleCatSchema = new Schema({
     categoryname: { type: String, required: true, trim: true }, // 分类名
+    sort: { type: Number }, // 排序
     count: { type: Number, default: 0 }, // 文章数量
+    delete: { type: Number, min: 0, max: 1, default: 0 }, // 删除状态
     create_time: { type: Date, default: Date.now }, // 创建时间
     update_time: { type: Date, default: Date.now } // 更新时间
   })

@@ -2,9 +2,9 @@
   <div class="page-user">    
     <section class="search">
 			<el-form :inline="true" class="search-form" size="mini">
-				<el-form-item label="用户ID">
+				<el-form-item label="分类ID">
 					<el-input 
-						placeholder="用户ID"
+						placeholder="分类ID"
 						size="mini"
 						v-model.lazy="queryParams.id"
 						@blur="search"
@@ -12,16 +12,26 @@
 					>
 					</el-input>
 				</el-form-item>
-				<el-form-item label="用户名">
+				<el-form-item label="分类名">
 					<el-input 
-						placeholder="用户名"
+						placeholder="分类名"
 						size="mini"
-						v-model.lazy="queryParams.username"
+						v-model.lazy="queryParams.categoryname"
 						@blur="search"						
 						clearable
 					>
 					</el-input>
-				</el-form-item>				
+				</el-form-item>	
+				<el-form-item label="状态">
+					<el-select v-model="queryParams.delete" clearable placeholder="请选择" size="mini" @change="search">
+						<el-option
+							v-for="item in staticModel.statusList"
+							:key="item.value"
+							:label="item.name"
+							:value="item.value">
+						</el-option>
+					</el-select> 
+				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="search">查询</el-button>
 				</el-form-item>
@@ -33,8 +43,8 @@
 				stripe
 				style="width: 100%">
 				<el-table-column
-					type="index"
-					label="顺序"
+					prop="sort"
+					label="排序"
 					width="50">
 				</el-table-column>
 				<el-table-column
@@ -53,6 +63,14 @@
 					width="150">
 				</el-table-column>
 				<el-table-column
+					prop="delete"
+					label="状态">
+					<template slot-scope="scope">
+						<el-tag v-if="scope.row.delete === 1" size="mini">删除</el-tag>
+						<el-tag v-else size="mini" type="danger">正常</el-tag>				
+					</template>
+				</el-table-column>
+				<el-table-column
 					prop="updateTime"
 					:formatter="formatDate"
 					label="更新时间">
@@ -63,8 +81,9 @@
 					label="操作"
 					width="200">
 					<template slot-scope="scope">
-						<el-button type="success" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row)"></el-button>					
-						<el-button type="info" icon="el-icon-delete" size="mini"></el-button>
+						<el-button type="success" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row)"></el-button>
+						<el-button v-if="scope.row.delete === 1" type="warning" size="mini" @click="handleRestore(scope.row)">启用</el-button>					
+						<el-button v-if="scope.row.delete === 0" type="info" icon="el-icon-delete" size="mini" @click="handleDelete(scope.row)"></el-button>
 					</template>
 				</el-table-column>
 			</el-table>			
@@ -95,6 +114,9 @@
       <el-form  @submit.native.prevent class="demo-form-inline" label-width="80px">
 				<el-form-item label="分类名">
 					<el-input v-model="dialog.model.categoryname" size="mini" style="width: 100%"></el-input>
+				</el-form-item>
+				<el-form-item label="顺序">
+					<el-input-number v-model="dialog.model.sort" controls-position="right" size="mini"></el-input-number>
 				</el-form-item>
 			</el-form>      
       <span slot="footer" class="dialog-footer">
@@ -146,8 +168,9 @@ export default {
   data () {
     return {
 			queryParams: {				
-				username: '',
-				id: ''
+				categoryname: '',
+				id: '',
+				delete: ''
 			},
 			pagination: {
 				pageSize: 10,
@@ -161,7 +184,11 @@ export default {
 			],
 			staticModel: {
 				categoryList: [],
-				tagList: []
+				tagList: [],
+				statusList: [
+					{name: '删除', value: 1},
+					{name: '正常', value: 0}
+				]
 			},
 			dialog: {
 				type: '',
@@ -170,12 +197,14 @@ export default {
 				initData: {
 					stock: null,
 					id: '',
-					categoryname: ''
+					categoryname: '',
+					sort: 1,
 				},
 				model: {
 					stock: null,
 					id: '',
-					categoryname: ''
+					categoryname: '',
+					sort: 1,
 				}
 			}
     }
@@ -184,15 +213,15 @@ export default {
 		postData: function () {
 			const {dialog = {}} = this
 			const {model = {}} = dialog
-      const {categoryname} = model
-      const postData = {categoryname}
+      const {categoryname, sort} = model
+      const postData = {categoryname, sort}
       return postData
 		},
 		putData: function () {
-			const { dialog = {} } = this
+			const {dialog = {}} = this
 			const {model = {}} = dialog
-			 const {id, categoryname} = model
-      const putData = {id, categoryname} 
+			const {id, categoryname, sort} = model
+      const putData = {id, categoryname, sort}
       return putData
 		}
 	},
@@ -202,7 +231,6 @@ export default {
 	},
   methods: {
 		search () {
-			console.log('search')
 			this.pagination.pageNum = 1
 			this.query()
 		},
@@ -256,9 +284,10 @@ export default {
 			this.parseFetchData(item, this.dialog.model)
 		},
 		parseFetchData (item = {}, model) {
-			const {Id, categoryname} = item
+			const {Id, categoryname, sort} = item
 			model.id = Id
 			model.categoryname = categoryname
+			model.sort = sort
 		},		
 		closeDialog () {
 			this.dialog.visible = false
@@ -336,7 +365,42 @@ export default {
       } catch (err) {
 				typeof failNext === 'function' && failNext(err)
       }  
-		}		
+		},
+		handleRestore (item) {
+			const putData = {
+				id: item.Id,
+				delete: 0
+			}
+			this.http_update_category(putData, (data) => {
+				this.$message({
+					showClose: true,
+					message: '恢复成功',
+					type: 'success'
+				})
+				this.query()
+			}, (data) => {
+				this.$message.error(err || '恢复失败')
+			})
+		},
+		handleDelete (item) {
+			const putData = {
+				id: item.Id,
+				delete: 1
+			}
+			this.$confirm('确认删除吗？').then(_ => {
+        this.http_update_category(putData, (data) => {
+          this.$message({
+            showClose: true,
+            message: '删除成功',
+            type: 'success'
+          })
+          this.query()
+        }, (data) => {
+          this.$message.error(err || '删除失败')
+        })
+      }).catch(_ => {})
+
+		}
   }
 }
 </script>

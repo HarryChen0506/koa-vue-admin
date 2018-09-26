@@ -125,7 +125,7 @@ const category = {
   },
   async post (ctx, next) {
     const {request} = ctx
-    const {categoryname} = request.body
+    const {categoryname, ...rest} = request.body
     try {
       ctx.validate({
         categoryname: 'string'
@@ -135,7 +135,7 @@ const category = {
       return
     }
     // 字段转换
-    const schema = {categoryname}
+    const schema = {categoryname, ...rest}
     try {
       const result = await literatureService.category.create(schema)
       // console.log('result', result, result._doc)
