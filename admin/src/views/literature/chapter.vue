@@ -4,7 +4,7 @@
       <el-card class="box-card">
         <div class="info-wrap">
           <div class="info-img">
-            <img :src="articleInfo.coverUrl" alt="articleInfo.title">
+            <img v-if="articleInfo.coverUrl" :src="articleInfo.coverUrl" alt="articleInfo.title">
           </div>
           <div class="info-text">
             <div class="info-title">{{articleInfo.title}}</div>
@@ -179,7 +179,7 @@
         flex-direction: row;
         .info-img {
           width: 100px;
-          min-height: 100px;
+          min-height: 120px;
           // background: red
           img {
             width: 100%
@@ -562,7 +562,7 @@ export default {
       }).catch(() => {})
 
     },
-    changeContent (content) {
+    changeContent () {
       // console.log('change content', content)
     }
   }

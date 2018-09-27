@@ -83,7 +83,7 @@
 				<el-table-column
 					label="分类">
 					<template slot-scope="scope">
-						<span>{{scope.row.mainCategoryId.categoryname}}</span>
+						<span>{{scope.row.mainCategoryId && scope.row.mainCategoryId.categoryname}}</span>
 					</template>			
 				</el-table-column>
 				<el-table-column
@@ -92,7 +92,7 @@
 					<template slot-scope="scope">
 						<div>
 							<el-tag style="margin-right: 5px" size="mini" v-for="item in scope.row.tagIds" :key="item._id">{{item.tagname}}</el-tag>
-					  </div>
+						</div>
 					</template>
 				</el-table-column>
 				<el-table-column
