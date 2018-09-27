@@ -32,6 +32,8 @@ const article = {
     const list = await ArticleModel
       .find(query, {password: 0})
       .populate({path: 'tag_ids', match: {delete: 0}, select: {tagname: 1}})
+      .populate({path: 'main_category_id', match: {delete: 0}, select: {categoryname: 1}})
+      .populate({path: 'category_ids', match: {delete: 0}, select: {categoryname: 1}})
       .skip(skipNum).limit(pageSize).sort(sort)
 
     return {
@@ -93,6 +95,14 @@ const category = {
     return {
       list,
       total
+    }
+  },
+  async getAllCategorys (query = {}) {
+    query.delete = 0
+    const sort = {'sort': 1}
+    const list = await ArticleCatModel.find(query, {delete: 0}).sort(sort)
+    return {
+      list
     }
   },
   async create (schema = {}) {
@@ -173,11 +183,9 @@ const tag = {
   async getAllTags (query = {}) {
     query.delete = 0
     const sort = {'create_time': 1}
-    const total = await ArticleTagModel.find(query).count()
     const list = await ArticleTagModel.find(query, {delete: 0}).sort(sort)
     return {
-      list,
-      total
+      list
     }
   },
   async create (schema = {}) {

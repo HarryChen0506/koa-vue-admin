@@ -58,8 +58,10 @@
 					</template>
 				</el-table-column>
 				<el-table-column
-					prop="mainCategoryId"
-					label="分类">					
+					label="分类">
+					<template slot-scope="scope">
+						<span>{{scope.row.mainCategoryId.categoryname}}</span>
+					</template>			
 				</el-table-column>
 				<el-table-column
 					label="标签"
@@ -166,9 +168,9 @@
 					<el-select v-model="dialog.model.categoryIds" multiple placeholder="请选择分类" size="mini">
 						<el-option
 							v-for="item in staticModel.categoryList"
-							:key="item._id"
+							:key="item.Id"
 							:label="item.categoryname"
-							:value="item._id">
+							:value="item.Id">
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -176,9 +178,9 @@
 					<el-select v-model="dialog.model.mainCategoryId"  placeholder="请选择主分类" size="mini">
 						<el-option
 							v-for="item in staticModel.categoryList"
-							:key="item._id"
+							:key="item.Id"
 							:label="item.categoryname"
-							:value="item._id">
+							:value="item.Id">
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -503,6 +505,7 @@ export default {
 	},
 	mounted () {
 		this.search()
+		this.queryAllCategorys()
 		this.queryAllTags()		
 	},
   methods: {
@@ -527,7 +530,20 @@ export default {
 				console.log(err)
 				this.$message.error('获取用户列表失败!')
       }      
-		},		
+		},
+		async queryAllCategorys () {
+			try {
+        const result = await request.literature.category.getAllCategorys ()  
+				const {data} = result
+				// console.log('data', data)
+				if (data.success) {
+					this.staticModel.categoryList = data.result.list
+				}				
+      } catch (err) {
+				console.log(err)
+				this.$message.error('获取标签列表失败!')
+      }
+    },	
 		async queryAllTags () {
 			try {
         const result = await request.literature.tag.getAllTags ()  
@@ -568,7 +584,7 @@ export default {
 			this.parseFetchData(item, this.dialog.model)
 		},
 		parseFetchData (item = {}, model) {
-			const {Id, title, writers, coverUrl, country, abstract, tagIds = [], categoryIds, mainCategoryId} = item
+			const {Id, title, writers, coverUrl, country, abstract, tagIds = [], categoryIds = [], mainCategoryId} = item
 			model.id = Id
 			model.title = title
 			model.writers = writers
@@ -576,8 +592,8 @@ export default {
 			model.country = country
 			model.abstract = abstract
 			model.tagIds = tagIds.map(v => v._id)
-			model.categoryIds = categoryIds
-			model.mainCategoryId = mainCategoryId
+			model.categoryIds = categoryIds.map(v => v._id)
+			model.mainCategoryId = mainCategoryId._id
 		},
 		getCoverImage (data) {
 			this.dialog.model.coverUrl = data.pictureUrl

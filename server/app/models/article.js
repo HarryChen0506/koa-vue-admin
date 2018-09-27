@@ -16,8 +16,8 @@ module.exports = (app) => {
     chapter_ids: [ { type: Schema.Types.ObjectId, ref: 'Chapter' } ], // 章节
     abstract: { type: String, trim: true }, // 摘要
     tag_ids: [{ type: Schema.Types.ObjectId, ref: 'ArticleTag' }], // 标签
-    category_ids: [{ type: Schema.Types.ObjectId, ref: 'Category' }], // 分类
-    main_category_id: { type: Schema.Types.ObjectId, ref: 'Category' }, // 主分类
+    category_ids: [{ type: Schema.Types.ObjectId, ref: 'ArticleCat' }], // 分类
+    main_category_id: { type: Schema.Types.ObjectId, ref: 'ArticleCat' }, // 主分类
     create_time: { type: Date, default: Date.now }, // 创建时间
     update_time: { type: Date, default: Date.now } // 更新时间
   })

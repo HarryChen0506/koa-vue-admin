@@ -72,6 +72,11 @@ const literature = {
 			const url = util.formatUrl(path, option)
 			return http.httpGet(url)
 		},
+		getAllCategorys: function (option = {}) {
+			const path = '/proxy/api/literature/category/all'
+			const url = util.formatUrl(path, option)
+			return http.httpGet(url)
+		},		
 		createCategory: function (data) {
 			const path = '/proxy/api/literature/category'
 			return http.httpPost(path, data)

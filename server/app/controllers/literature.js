@@ -16,9 +16,10 @@ const article = {
       ctx.dblog.info('article: article query success')
       ctx.body = util.handleResult('success', result)
     } catch (err) {
+      console.log('err', err)
       ctx.dblog.info('article: article is not exist')
       // 用户校验错误
-      ctx.body = util.handleResult('fail', null, err || '文章不存在')
+      ctx.body = util.handleResult('fail', null, err.message || '文章不存在')
     }
   },
   async post (ctx, next) {
@@ -118,6 +119,23 @@ const category = {
       ctx.body = util.handleResult('success', result)
     } catch (err) {
       ctx.dblog.info('literature: category is not exist')
+      console.log('err', err)
+      // 用户校验错误
+      ctx.body = util.handleResult('fail', null, err.message || '文章分类不存在')
+    }
+  },
+  async all (ctx, next) {
+    const {query} = ctx
+    // console.log('query', query)
+    try {
+      const result = await literatureService.category.getAllCategorys(query)
+      result.list = result.list.map(v => {
+        return util.formatObjectKeyFromlineToCamel(v._doc)
+      })
+      ctx.dblog.info('literature: category all query success')
+      ctx.body = util.handleResult('success', result)
+    } catch (err) {
+      ctx.dblog.info('literature: category all is not exist')
       console.log('err', err)
       // 用户校验错误
       ctx.body = util.handleResult('fail', null, err || '文章分类不存在')
