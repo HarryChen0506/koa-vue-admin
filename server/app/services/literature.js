@@ -31,7 +31,7 @@ const article = {
     const total = await ArticleModel.find(query).count()
     const list = await ArticleModel
       .find(query, {password: 0})
-      .populate({path: 'role', match: {active: 1}, select: {rolename: 1}})
+      .populate({path: 'tag_ids', match: {delete: 0}, select: {tagname: 1}})
       .skip(skipNum).limit(pageSize).sort(sort)
 
     return {

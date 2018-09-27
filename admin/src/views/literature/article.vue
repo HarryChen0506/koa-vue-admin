@@ -62,16 +62,19 @@
 					label="分类">					
 				</el-table-column>
 				<el-table-column
-					label="标签">
+					label="标签"
+					width="150">
 					<template slot-scope="scope">
-						<el-tag style="margin-right: 5px" size="mini" v-for="item in scope.row.tagIds" :key="item._id">{{item.tagname}}</el-tag>
+						<div>
+							<el-tag style="margin-right: 5px" size="mini" v-for="item in scope.row.tagIds" :key="item._id">{{item.tagname}}</el-tag>
+					  </div>
 					</template>
 				</el-table-column>
 				<el-table-column
 					label="封面">
 					<template slot-scope="scope">
-						<span style="display: inline-block; width: 50px; height: 50px;border-radius: 50px; overflow: hidden">
-							<img style="width: 100%; height: 100%" v-if="scope.row.coverUrl" :src="scope.row.avatar" alt="封面">
+						<span style="display: inline-block; width: 50px; height: 50px; overflow: hidden">
+							<img style="width: 100%; height: 100%" v-if="scope.row.coverUrl" :src="scope.row.coverUrl" alt="封面">
 						</span>
 					</template>
 				</el-table-column>
@@ -82,7 +85,7 @@
 						<el-tag v-if="scope.row.active === 1" size="mini">启用</el-tag>
 						<el-tag v-else size="mini" type="danger">禁用</el-tag>						
 					</template>
-				</el-table-column>				 -->
+				</el-table-column> -->
 				<el-table-column
 					prop="updateTime"
 					:formatter="formatDate"
@@ -183,9 +186,9 @@
 					<el-select v-model="dialog.model.tagIds" multiple placeholder="请选择主分类" size="mini">
 						<el-option
 							v-for="item in staticModel.tagList"
-							:key="item._id"
+							:key="item.Id"
 							:label="item.tagname"
-							:value="item._id">
+							:value="item.Id">
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -495,6 +498,7 @@ export default {
       // console.log('watch labelList', val)
       // 将接口数据转换成树模型
 			this.dialog_manage_tag.model.data = this.formatLabelTree(val)
+			this.staticModel.tagList = this.formatSelectTagList(val)
     },
 	},
 	mounted () {
@@ -537,6 +541,12 @@ export default {
 				this.$message.error('获取标签列表失败!')
       }
     },
+		// 转化为选择器可选的标签，过滤掉一级标签
+		formatSelectTagList (list) {
+			return list.filter(v => {			
+				return v.tagParentId
+			})
+		},
 		handleCurrentChange () {
 			this.query()
 		},
@@ -558,14 +568,14 @@ export default {
 			this.parseFetchData(item, this.dialog.model)
 		},
 		parseFetchData (item = {}, model) {
-			const {Id, title, writers, coverUrl, country, abstract, tagIds, categoryIds, mainCategoryId} = item
+			const {Id, title, writers, coverUrl, country, abstract, tagIds = [], categoryIds, mainCategoryId} = item
 			model.id = Id
 			model.title = title
 			model.writers = writers
 			model.coverUrl = coverUrl
 			model.country = country
 			model.abstract = abstract
-			model.tagIds = tagIds
+			model.tagIds = tagIds.map(v => v._id)
 			model.categoryIds = categoryIds
 			model.mainCategoryId = mainCategoryId
 		},
@@ -698,7 +708,7 @@ export default {
         })
       })
       return result
-    },
+    },		
 		// 过滤树节点
     filterNode (value, data, node) {
       if (!value) return true
