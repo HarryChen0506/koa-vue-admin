@@ -90,7 +90,7 @@
 					label="内容"
 					width="150">
           <template slot-scope="scope">
-						<el-button type="primary" icon="el-icon-view" size="mini" @click="openEditDialog(scope.row)"></el-button>	
+						<el-button type="primary" icon="el-icon-view" size="mini" @click="openViewDialog(scope.row)"></el-button>	
 					</template>
 				</el-table-column>	
 				<el-table-column
@@ -153,7 +153,20 @@
         <el-button type="primary" @click="dialogConfirm" >确 定</el-button>
       </span>
     </el-dialog>
-
+		<!-- 预览对话框 -->
+		<el-dialog
+      v-if="dialog_view.visible"
+      :title="dialog_view.title"
+      :visible.sync="dialog_view.visible"
+      width="50%" center>
+      <div class="view-wrap">
+				<div class="content-wrap" v-html="dialog_view.model.content"></div>				
+			</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog_view">取 消</el-button>
+        <el-button type="primary" @click="dialogConfirm_view" >确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -211,6 +224,19 @@
 			display: flex;
 			justify-content: flex-start;
 		}	
+	}
+	.view-wrap {
+		background: #f9f9fa;
+		padding: 20px 0;
+		.content-wrap {
+			width: 375px;
+			max-height: 500px;
+			overflow: auto;
+			padding: 20px;
+			margin: 0 auto;
+			border-radius: 5px;
+			background: #fff
+		}
 	}
 </style>
 <style lang="less">
@@ -280,6 +306,17 @@ export default {
           sort: 1,
           articleId: '',
           chaptername: '',
+          content: ''
+				}
+			},
+			dialog_view: {
+				type: '',
+				title: '',
+				visible: false,
+				initData: {				
+          content: ''
+				},
+				model: {
           content: ''
 				}
 			}
@@ -379,6 +416,19 @@ export default {
 		},
 		formatDate (row, column, cellValue) {
 			return moment(new Date(cellValue)).format('lll')
+		},
+		openViewDialog (item) {
+			this.dialog_view.visible = true
+			this.dialog_view.type = 'view'
+			this.dialog_view.title = '预览'
+      this.dialog_view.model = util.deepClone(this.dialog.initData)
+      this.dialog_view.model.content = item.content
+		},
+		closeDialog_view () {
+			this.dialog_view.visible = false
+		},
+		dialogConfirm_view () {
+			this.closeDialog_view()
 		},
 		openCreateDialog () {
 			this.dialog.visible = true
