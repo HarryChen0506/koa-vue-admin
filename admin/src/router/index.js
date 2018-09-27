@@ -99,6 +99,7 @@ export default new Router({
     },
     {
       path: '/literature',
+      redirect: '/literature/article',
       name: 'literature',
       component: Layout,
       meta: {title: '文学', icon: 'icon-book'},
@@ -108,6 +109,13 @@ export default new Router({
           name: 'article',
           meta: {title: '文章', icon: 'icon-table'},
           component:  () => import('@/views/literature/article.vue')
+        },
+        {
+          path: 'chapter/:id',
+          name: 'chapter',
+          meta: {title: '章节', icon: 'icon-th-list'},
+          component:  () => import('@/views/literature/chapter.vue'),
+          hidden: true
         },
         {
           path: 'category',

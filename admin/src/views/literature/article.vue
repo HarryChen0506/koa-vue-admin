@@ -117,6 +117,14 @@
 					label="更新时间">
 				</el-table-column>
 				<el-table-column
+					label="章节">
+					<template slot-scope="scope">						
+						<router-link :to="{ name: 'chapter', params: { id: scope.row.Id }}" target="_blank">
+							<el-button type="primary" size="mini">查看</el-button>
+						</router-link>
+					</template>
+				</el-table-column>
+				<el-table-column
 					:formatter="formatDate"
 					fixed="right"
 					label="操作"
@@ -593,6 +601,9 @@ export default {
 		},
 		formatDate (row, column, cellValue) {
 			return moment(new Date(cellValue)).format('lll')
+		},
+		pageToChapter (item) {
+			console.log('pageToChapter', item)
 		},
 		openCreateDialog () {
 			this.dialog.visible = true
