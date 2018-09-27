@@ -4,6 +4,7 @@
 const ArticleModel = require('../models/article.js')()
 const ArticleCatModel = require('../models/articleCat.js')()
 const ArticleTagModel = require('../models/articleTag.js')()
+const ArticleChapModel = require('../models/articleChap.js')()
 const article = {
   async getArticleByParams (params = {}) {
     // const {username, nickname, id} = params
@@ -228,8 +229,73 @@ const tag = {
     return ArticleTagModel.findOneAndUpdate({_id}, {$set: {...rest}}, {new: true})
   }
 }
+const chapter = {
+  async getChapterByParams (params = {}) {
+    // const {username, nickname, id} = params
+    let {pageSize = 10, pageNum = 1, articleId, ...rest} = params
+    pageSize = parseInt(pageSize)
+    pageNum = parseInt(pageNum)
+
+    if (!articleId) {
+      throw new Error('查询参数没有articleId')
+    }
+
+    const query = {article_id: articleId}
+    Object.keys(rest).forEach(v => {
+      if (params[v]) {
+        if (v === 'id') {
+          query['_id'] = params[v]
+        } else if (v === 'chaptername') {
+          // 模糊查询
+          query['chaptername'] = {$regex: params[v]}
+        } else if (v === 'delete') {
+          const code = parseInt(params[v])
+          if (code === 0) {
+            query['delete'] = {$in: [0, null]}
+          } else {
+            query['delete'] = code
+          }
+        } else {
+          query[v] = params[v]
+        }
+      }
+    })
+    // console.log('query', query)
+    const skipNum = (pageNum - 1) * pageSize
+    const sort = {'sort': 1, 'create_time': 1}
+
+    const total = await ArticleChapModel.find(query).count()
+    const list = await ArticleChapModel
+      .find(query)
+      .skip(skipNum).limit(pageSize).sort(sort)
+
+    return {
+      list,
+      total
+    }
+  },
+  async create (schema = {}) {
+    let {article_id, content, ...rest} = schema
+    if (!article_id) {
+      return null
+    }
+    if (!content) {
+      return null
+    }
+    const doc = {article_id, content, ...rest}
+    // console.log('doc', doc)
+    let newChapter = new ArticleChapModel(doc)
+    return newChapter.save()
+  },
+  async update (schema = {}) {
+    let {_id, ...rest} = schema
+    // {_id}, {$set: {...rest}}
+    return ArticleChapModel.findOneAndUpdate({_id}, {$set: {...rest}}, {new: true})
+  }
+}
 module.exports = {
   article,
   category,
-  tag
+  tag,
+  chapter
 }

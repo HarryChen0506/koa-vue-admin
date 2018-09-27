@@ -100,6 +100,21 @@ const literature = {
 			const path = '/proxy/api/literature/tag'
 			return http.httpPut(path, data)
 		}
+	},
+	chapter: {
+		getChapterByParams: function (option = {}) {
+			const path = '/proxy/api/literature/chapter/list'
+			const url = util.formatUrl(path, option)
+			return http.httpGet(url)
+		},
+		createChapter: function (data) {
+			const path = '/proxy/api/literature/chapter'
+			return http.httpPost(path, data)
+		},
+		updateChapter: function (data) {
+			const path = '/proxy/api/literature/chapter'
+			return http.httpPut(path, data)
+		}
 	}
 }
 

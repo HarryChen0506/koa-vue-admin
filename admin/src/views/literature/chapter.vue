@@ -18,14 +18,14 @@
               <el-tag style="margin-right: 5px" size="mini" v-for="item in articleInfo.tagIds" :key="item._id">{{item.tagname}}</el-tag>
             </div>
           </div>
-        </div>     
+        </div>
       </el-card> 
     </section>   
     <section class="search">          
 			<el-form :inline="true" class="search-form" size="mini">
-				<el-form-item label="分类ID">
+				<el-form-item label="章节ID">
 					<el-input 
-						placeholder="分类ID"
+						placeholder="章节ID"
 						size="mini"
 						v-model.lazy="queryParams.id"
 						@blur="search"
@@ -33,11 +33,11 @@
 					>
 					</el-input>
 				</el-form-item>
-				<el-form-item label="分类名">
+				<el-form-item label="章节名">
 					<el-input 
-						placeholder="分类名"
+						placeholder="章节名"
 						size="mini"
-						v-model.lazy="queryParams.categoryname"
+						v-model.lazy="queryParams.chaptername"
 						@blur="search"						
 						clearable
 					>
@@ -70,19 +70,14 @@
 				</el-table-column>
 				<el-table-column
 					prop="Id"
-					label="分类Id"
+					label="章节Id"
 					width="210">
 				</el-table-column>
 				<el-table-column
-					prop="categoryname"
-					label="分类名"
+					prop="chaptername"
+					label="章节名"
 					width="150">
-				</el-table-column>
-				<el-table-column
-					prop="count"
-					label="文章数量"
-					width="150">
-				</el-table-column>
+				</el-table-column>				
 				<el-table-column
 					prop="delete"
 					label="状态">
@@ -91,6 +86,13 @@
 						<el-tag v-else size="mini" type="danger">正常</el-tag>				
 					</template>
 				</el-table-column>
+        <el-table-column
+					label="内容"
+					width="150">
+          <template slot-scope="scope">
+						<el-button type="primary" icon="el-icon-view" size="mini" @click="openEditDialog(scope.row)"></el-button>	
+					</template>
+				</el-table-column>	
 				<el-table-column
 					prop="updateTime"
 					:formatter="formatDate"
@@ -131,15 +133,21 @@
       v-if="dialog.visible"
       :title="dialog.title"
       :visible.sync="dialog.visible"
-      width="30%" center>    
+      width="70%" center>    
       <el-form  @submit.native.prevent class="demo-form-inline" label-width="80px">
-				<el-form-item label="分类名">
-					<el-input v-model="dialog.model.categoryname" size="mini" style="width: 100%"></el-input>
+        <el-form-item label="文章Id">
+					<span>{{dialog.model.articleId}}</span>
+				</el-form-item>
+				<el-form-item label="章节名">
+					<el-input v-model="dialog.model.chaptername" size="mini" style="width: 200px"></el-input>
 				</el-form-item>
 				<el-form-item label="顺序">
 					<el-input-number v-model="dialog.model.sort" controls-position="right" size="mini"></el-input-number>
-				</el-form-item>
-			</el-form>      
+				</el-form-item>        
+			</el-form>
+      <div class="content">
+        <wang-editor ref="chapterEditor" v-model="dialog.model.content" :config="{uploadImgShowBase64: true}" @change="changeContent"/>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button type="primary" @click="dialogConfirm" >确 定</el-button>
@@ -218,17 +226,19 @@ import moment from 'moment'
 import util from '@/utils/util'
 import request from '@/services/request'
 import ImageUpload from '@/components/ImageUpload'
+import WangEditor from '@/components/WangEditor'
 moment.locale('zh-cn')
 
 export default {
 	name: 'user',
 	components: {
-    ImageUpload
+    ImageUpload,
+    WangEditor
   },
   data () {
     return {
 			queryParams: {				
-				categoryname: '',
+				chaptername: '',
 				id: '',
 				delete: ''
 			},
@@ -258,15 +268,19 @@ export default {
 				visible: false,
 				initData: {
 					stock: null,
-					id: '',
-					categoryname: '',
-					sort: 1,
+          id: '',
+          sort: 1,
+          articleId: '',
+          chaptername: '',
+          content: ''
 				},
 				model: {
 					stock: null,
-					id: '',
-					categoryname: '',
-					sort: 1,
+          id: '',
+          sort: 1,
+          articleId: '',
+          chaptername: '',
+          content: ''
 				}
 			}
     }
@@ -275,15 +289,15 @@ export default {
 		postData: function () {
 			const {dialog = {}} = this
 			const {model = {}} = dialog
-      const {categoryname, sort} = model
-      const postData = {categoryname, sort}
+      const {chaptername, articleId, content, sort} = model
+      const postData = {chaptername, articleId, content, sort}
       return postData
 		},
 		putData: function () {
 			const {dialog = {}} = this
 			const {model = {}} = dialog
-			const {id, categoryname, sort} = model
-      const putData = {id, categoryname, sort}
+			const {id, chaptername, content, sort} = model
+      const putData = {id, chaptername, content, sort}
       return putData
 		}
   },
@@ -311,11 +325,16 @@ export default {
 			this.query()
 		},
 		async query () {
-			const {pageNum, pageSize} = this.pagination
-			const query = {...this.queryParams, pageNum, pageSize}
+      const {pageNum, pageSize} = this.pagination
+      const articleId = this.articleId
+      if (!articleId) {
+        this.$message.error('未获取到文章id, 无法查询章节!')
+        return
+      }
+      const query = {...this.queryParams, pageNum, pageSize, articleId}
 			console.log('query', query)
 			try {
-        const result = await request.literature.category.getCategoryByParams({query}) 
+        const result = await request.literature.chapter.getChapterByParams({query}) 
 				const {data} = result
 				// console.log('data', data)
 				if (data.success) {
@@ -364,20 +383,23 @@ export default {
 		openCreateDialog () {
 			this.dialog.visible = true
 			this.dialog.type = 'create'
-			this.dialog.title = '新增分类'
-			this.dialog.model = util.deepClone(this.dialog.initData)			
+			this.dialog.title = '新增章节'
+      this.dialog.model = util.deepClone(this.dialog.initData)
+      this.dialog.model.articleId = this.articleId
 		},
 		openEditDialog (item) {
 			this.dialog.visible = true
 			this.dialog.type = 'edit'
-			this.dialog.title = '编辑分类'	
+			this.dialog.title = '编辑章节'	
 			this.dialog.model = util.deepClone(this.dialog.initData)		
 			this.parseFetchData(item, this.dialog.model)
 		},
 		parseFetchData (item = {}, model) {
-			const {Id, categoryname, sort} = item
-			model.id = Id
-			model.categoryname = categoryname
+			const {Id, articleId, chaptername, content, sort} = item
+      model.id = Id
+      model.articleId = articleId
+			model.chaptername = chaptername
+			model.content = content
 			model.sort = sort
 		},		
 		closeDialog () {
@@ -387,45 +409,45 @@ export default {
 			this.dialog.model = util.deepClone(this.dialog.initData)
 		},
 		dialogConfirm () {
-			console.log('confirm')
+			// console.log('confirm', this.dialog)
 			const type = this.dialog.type
 			if (type === 'create') {
-				this.createCategory()
+				this.createChapter()
 			} else if (type === 'edit') {
-				this.editCategory()
+				this.editChapter()
 			}
 		},
-		createCategory () {
-			this.http_create_category(() => {
+		createChapter () {
+			this.http_create_chapter(() => {
 				this.$message({
 					showClose: true,
-					message: '创建分类成功',
+					message: '创建章节成功',
 					type: 'success'
 				})
 				this.query()
 				this.closeDialog()
 			}, err => {
-				this.$message.error(err || '创建分类失败')
+				this.$message.error(err || '创建章节失败')
 			})
 		},
-		editCategory () {
-			this.http_edit_category(() => {
+		editChapter () {
+			this.http_edit_chapter(() => {
 				this.$message({
 					showClose: true,
-					message: '修改分类成功',
+					message: '修改章节成功',
 					type: 'success'
 				})
 				this.query()
 				this.closeDialog()
 			}, err => {
-				this.$message.error(err || '修改分类失败')
+				this.$message.error(err || '修改章节失败')
 			})
 		},
-		async http_create_category (sucNext, failNext) {			
+		async http_create_chapter (sucNext, failNext) {			
 			const postData = this.postData
-			console.log('postData', postData)
+			// console.log('postData', postData)
 			try {
-        const result = await request.literature.category.createCategory(postData) 
+        const result = await request.literature.chapter.createChapter(postData) 
 				const {data} = result
 				if (data.success) {
 					typeof sucNext === 'function' && sucNext(data)
@@ -436,17 +458,15 @@ export default {
 				typeof failNext === 'function' && failNext(err)
       }   
 		},
-		async http_edit_category (sucNext, failNext) {
+		async http_edit_chapter (sucNext, failNext) {
 			const putData = this.putData
-			console.log('putData', putData)
-			// return
-			this.http_update_category(putData, sucNext, failNext)  
+			this.http_update_chapter(putData, sucNext, failNext)  
 		},
-		async http_update_category (data, sucNext, failNext) {
+		async http_update_chapter (data, sucNext, failNext) {
 			const {id, ...rest} = data
 			const putData = {id, ...rest}
 			try {
-        const result = await request.literature.category.updateCategory(putData) 
+        const result = await request.literature.chapter.updateChapter(putData) 
 				const {data} = result
 				if (data.success) {
 					typeof sucNext === 'function' && sucNext(data)
@@ -462,7 +482,7 @@ export default {
 				id: item.Id,
 				delete: 0
 			}
-			this.http_update_category(putData, () => {
+			this.http_update_chapter(putData, () => {
 				this.$message({
 					showClose: true,
 					message: '恢复成功',
@@ -479,7 +499,7 @@ export default {
 				delete: 1
 			}
 			this.$confirm('确认删除吗？').then(() => {
-        this.http_update_category(putData, () => {
+        this.http_update_chapter(putData, () => {
           this.$message({
             showClose: true,
             message: '删除成功',
@@ -491,7 +511,10 @@ export default {
         })
       }).catch(() => {})
 
-		}
+    },
+    changeContent (content) {
+      // console.log('change content', content)
+    }
   }
 }
 </script>

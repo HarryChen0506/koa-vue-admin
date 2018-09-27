@@ -18,4 +18,7 @@ router.get('/tag/list', literatureCtr.tag.list)
 router.get('/tag/all', literatureCtr.tag.all)
 router.post('/tag', literatureCtr.tag.post)
 router.put('/tag', literatureCtr.tag.put)
+router.get('/chapter/list', literatureCtr.chapter.list)
+router.post('/chapter', literatureCtr.chapter.post)
+router.put('/chapter', literatureCtr.chapter.put)
 module.exports = router

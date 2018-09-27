@@ -138,7 +138,7 @@ const category = {
       ctx.dblog.info('literature: category all is not exist')
       console.log('err', err)
       // 用户校验错误
-      ctx.body = util.handleResult('fail', null, err || '文章分类不存在')
+      ctx.body = util.handleResult('fail', null, err.message || '文章分类不存在')
     }
   },
   async post (ctx, next) {
@@ -206,7 +206,7 @@ const tag = {
       ctx.dblog.info('literature: tag is not exist')
       console.log('err', err)
       // 用户校验错误
-      ctx.body = util.handleResult('fail', null, err || '文章标签不存在')
+      ctx.body = util.handleResult('fail', null, err.message || '文章标签不存在')
     }
   },
   async all (ctx, next) {
@@ -223,7 +223,7 @@ const tag = {
       ctx.dblog.info('literature: tag all is not exist')
       console.log('err', err)
       // 用户校验错误
-      ctx.body = util.handleResult('fail', null, err || '文章标签不存在')
+      ctx.body = util.handleResult('fail', null, err.message || '文章标签不存在')
     }
   },
   async post (ctx, next) {
@@ -289,6 +289,82 @@ const tag = {
 
 // 章节管理
 const chapter = {
+  async list (ctx, next) {
+    const {query} = ctx
+    // console.log('query', query)
+    try {
+      const result = await literatureService.chapter.getChapterByParams(query)
+      result.list = result.list.map(v => {
+        return util.formatObjectKeyFromlineToCamel(v._doc)
+      })
+      ctx.dblog.info('literature: chapter query success')
+      ctx.body = util.handleResult('success', result)
+    } catch (err) {
+      ctx.dblog.info('literature: chapter is not exist')
+      console.log('err', err)
+      ctx.body = util.handleResult('fail', null, err.message || '文章章节不存在')
+    }
+  },
+  async post (ctx, next) {
+    const {request} = ctx
+    const {articleId, content, ...rest} = request.body
+    try {
+      ctx.validate({
+        articleId: 'string',
+        content: 'string'
+      }, {articleId, content})
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err)
+      return
+    }
+    // 字段转换
+    const schema = {article_id: articleId, content}
+    Object.keys(rest).forEach(v => {
+      if (rest[v]) {
+        switch (v) {
+        // case 'tagParentId':
+        //   schema['tag_parent_id'] = rest[v]
+        //   break
+        default:
+          schema[v] = rest[v]
+        }
+      }
+    })
+    try {
+      const result = await literatureService.chapter.create(schema)
+      // console.log('result', result, result._doc)
+      // const {...article} = result._doc
+      const chapter = util.formatObjectKeyFromlineToCamel(result._doc)
+      ctx.body = util.handleResult('success', chapter)
+    } catch (err) {
+      // console.log('err', err.message)
+      ctx.body = util.handleResult('fail', null, err.message || '创建章节失败')
+    }
+  },
+  async put (ctx, next) {
+    const {request} = ctx
+    const {id, ...rest} = request.body
+    try {
+      ctx.validate({
+        id: 'string'
+      }, {id})
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err)
+      return
+    }
+    // 字段转换
+    const schema = {_id: id, ...rest}
+    try {
+      const result = await literatureService.chapter.update(schema)
+      if (result) {
+        ctx.body = util.handleResult('success', result)
+      } else {
+        ctx.body = util.handleResult('fail', null, '更新章节失败')
+      }
+    } catch (err) {
+      ctx.body = util.handleResult('fail', null, err.message || '更新章节失败')
+    }
+  }
 }
 
 module.exports = {
