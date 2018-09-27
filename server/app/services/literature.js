@@ -16,9 +16,15 @@ const article = {
       if (params[v]) {
         if (v === 'id') {
           query['_id'] = params[v]
-        } else if (v === 'username') {
+        } else if (v === 'title') {
           // 模糊查询
-          query['username'] = {$regex: params[v]}
+          query['title'] = {$regex: params[v]}
+        } else if (v === 'writerName') {
+          // 模糊查询
+          query['writers.name'] = {$regex: params[v]}
+        } else if (v === 'mainCategoryId') {
+          // 模糊查询
+          query['main_category_id'] = params[v]
         } else {
           query[v] = params[v]
         }

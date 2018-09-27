@@ -2,26 +2,49 @@
   <div class="page-user">    
     <section class="search">
 			<el-form :inline="true" class="search-form" size="mini">
-				<el-form-item label="用户ID">
+				<el-form-item label="文章ID" >
 					<el-input 
-						placeholder="用户ID"
+						placeholder="文章ID"
 						size="mini"
 						v-model.lazy="queryParams.id"
 						@blur="search"
 						clearable
+						style="width: 150px"
 					>
 					</el-input>
 				</el-form-item>
-				<el-form-item label="用户名">
+				<el-form-item label="文章名">
 					<el-input 
-						placeholder="用户名"
+						placeholder="文章名"
 						size="mini"
-						v-model.lazy="queryParams.username"
+						v-model.lazy="queryParams.title"
 						@blur="search"						
 						clearable
+						style="width: 150px"
 					>
 					</el-input>
-				</el-form-item>				
+				</el-form-item>
+				<el-form-item label="作者">
+					<el-input 
+						placeholder="作者"
+						size="mini"
+						v-model.lazy="queryParams.writerName"
+						@blur="search"						
+						clearable
+						style="width: 100px"
+					>
+					</el-input>
+				</el-form-item>
+				<el-form-item label="分类">
+					<el-select v-model="queryParams.mainCategoryId" clearable placeholder="请选择" size="mini" @change="search" style="width: 100px">
+						<el-option
+							v-for="item in staticModel.categoryList"
+							:key="item.Id"
+							:label="item.categoryname"
+							:value="item.Id">
+						</el-option>
+					</el-select>
+				</el-form-item>	
 				<el-form-item>
 					<el-button type="primary" @click="search">查询</el-button>
 				</el-form-item>
@@ -384,8 +407,10 @@ export default {
   data () {
     return {
 			queryParams: {				
-				username: '',
-				id: ''
+				title: '',
+				id: '',
+				writerName: '',
+				mainCategoryId: ''
 			},
 			pagination: {
 				pageSize: 10,
