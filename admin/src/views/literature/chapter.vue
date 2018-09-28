@@ -235,7 +235,8 @@
 			padding: 20px;
 			margin: 0 auto;
 			border-radius: 5px;
-			background: #fff
+			background: #fff;
+			line-height: 20px;
 		}
 	}
 </style>
