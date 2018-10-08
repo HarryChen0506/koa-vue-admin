@@ -98,7 +98,7 @@
 				<el-table-column
 					label="封面">
 					<template slot-scope="scope">
-						<span style="display: inline-block; width: 50px; height: 50px; overflow: hidden">
+						<span style="display: inline-block; width: 50px; overflow: hidden">
 							<img style="width: 100%; height: 100%" v-if="scope.row.coverUrl" :src="scope.row.coverUrl" alt="封面">
 						</span>
 					</template>
@@ -189,7 +189,7 @@
 				<el-form-item label="封面图片">
 					<image-upload fileLoadId="image_upload_1" @output-image="getCoverImage" :oss="true" dir-path="demo/image/"></image-upload>
 					<span style="display: inline-block; width: 80px; vertical-align: middle; margin-left: 20px">
-						<img style="width: 100%" v-if="dialog.model.coverUrl" :src="dialog.model.coverUrl" alt="用户头像">
+						<img style="width: 100%" v-if="dialog.model.coverUrl" :src="dialog.model.coverUrl" alt="封面头像">
 					</span>
 				</el-form-item>	
 				<el-form-item label="摘要">

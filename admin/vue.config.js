@@ -83,7 +83,7 @@ module.exports = {
         target: "http://localhost:4000",
         pathRewrite: {
             // '^/goods': '/goods'
-            '/proxy': ''
+            '^/proxy': ''
         },
         bypass: function(req, res, proxyOptions) {
           if (req.headers.accept.indexOf("html") !== -1) {
@@ -91,6 +91,13 @@ module.exports = {
             return "/index.html";
           }
         }
+      },
+      "/mp/": {
+        target: "http://localhost:4000",
+        pathRewrite: {
+          // '^/goods': '/goods'
+          '^/mp': ''
+        },
       }
     }, // 设置代理
     before: app => {}

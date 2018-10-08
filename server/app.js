@@ -18,6 +18,7 @@ const role = require('./app/routes/role')
 const auth = require('./app/routes/auth')
 const upload = require('./app/routes/upload')
 const literature = require('./app/routes/literature')
+const wechat = require('./app/routes/wechat')
 
 const config = require('./app/config/index.js')(app)
 // console.log('app.config', app.config)
@@ -57,6 +58,7 @@ app.use(role.routes(), role.allowedMethods())
 app.use(auth.routes(), auth.allowedMethods())
 app.use(upload.routes(), upload.allowedMethods())
 app.use(literature.routes(), literature.allowedMethods())
+app.use(wechat.routes(), wechat.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
