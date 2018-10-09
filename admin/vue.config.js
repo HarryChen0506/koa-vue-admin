@@ -78,6 +78,7 @@ module.exports = {
     // port: 8082,
     // https: false,
     hotOnly: false,
+    disableHostCheck: true,
     proxy: {
       "/proxy/": {
         target: "http://localhost:4000",
@@ -85,12 +86,12 @@ module.exports = {
             // '^/goods': '/goods'
             '^/proxy': ''
         },
-        bypass: function(req, res, proxyOptions) {
-          if (req.headers.accept.indexOf("html") !== -1) {
-            console.log("Skipping proxy for browser request.");
-            return "/index.html";
-          }
-        }
+        // bypass: function(req, res, proxyOptions) {
+        //   if (req.headers.accept.indexOf("html") !== -1) {
+        //     console.log("Skipping proxy for browser request.");
+        //     return "/index.html";
+        //   }
+        // }
       },
       "/mp/": {
         target: "http://localhost:4000",
