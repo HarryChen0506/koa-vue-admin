@@ -55,7 +55,12 @@
 				<el-table-column
 					prop="categoryname"
 					label="分类名"
-					width="150">
+					width="100">
+				</el-table-column>
+				<el-table-column
+					prop="categorycode"
+					label="分类code"
+					width="100">
 				</el-table-column>
 				<el-table-column
 					prop="count"
@@ -114,6 +119,9 @@
       <el-form  @submit.native.prevent class="demo-form-inline" label-width="80px">
 				<el-form-item label="分类名">
 					<el-input v-model="dialog.model.categoryname" size="mini" style="width: 100%"></el-input>
+				</el-form-item>
+				<el-form-item label="分类code">
+					<el-input v-model="dialog.model.categorycode" size="mini" style="width: 100%"></el-input>
 				</el-form-item>
 				<el-form-item label="顺序">
 					<el-input-number v-model="dialog.model.sort" controls-position="right" size="mini"></el-input-number>
@@ -198,12 +206,14 @@ export default {
 					stock: null,
 					id: '',
 					categoryname: '',
+					categorycode: '',
 					sort: 1,
 				},
 				model: {
 					stock: null,
 					id: '',
 					categoryname: '',
+					categorycode: '',
 					sort: 1,
 				}
 			}
@@ -213,21 +223,20 @@ export default {
 		postData: function () {
 			const {dialog = {}} = this
 			const {model = {}} = dialog
-      const {categoryname, sort} = model
-      const postData = {categoryname, sort}
+      const {categoryname, categorycode, sort} = model
+      const postData = {categoryname, categorycode, sort}
       return postData
 		},
 		putData: function () {
 			const {dialog = {}} = this
 			const {model = {}} = dialog
-			const {id, categoryname, sort} = model
-      const putData = {id, categoryname, sort}
+			const {id, categoryname, categorycode, sort} = model
+      const putData = {id, categoryname, categorycode, sort}
       return putData
 		}
 	},
 	mounted () {
 		this.search()
-		this.queryAllRoles()
 	},
   methods: {
 		search () {
@@ -248,22 +257,9 @@ export default {
 				}				
       } catch (err) {
 				console.log(err)
-				this.$message.error('获取用户列表失败!')
+				this.$message.error('获取分类列表失败!')
       }      
-		},
-		async queryAllRoles () {
-			try {
-        const result = await request.role.getAllRoles()  
-				const {data} = result
-				console.log('data', data)
-				if (data.success) {
-					this.staticModel.roleList = data.result.list
-				}				
-      } catch (err) {
-				console.log(err)
-				this.$message.error('获取角色列表失败!')
-      }     
-		},
+		},	
 		handleCurrentChange () {
 			this.query()
 		},
@@ -284,9 +280,10 @@ export default {
 			this.parseFetchData(item, this.dialog.model)
 		},
 		parseFetchData (item = {}, model) {
-			const {Id, categoryname, sort} = item
+			const {Id, categoryname, categorycode, sort} = item
 			model.id = Id
 			model.categoryname = categoryname
+			model.categorycode = categorycode
 			model.sort = sort
 		},		
 		closeDialog () {
