@@ -14,4 +14,5 @@ router.post('/wlyh/logincode', wechatCtr.wlyh.logincode) // 用户发送logincod
 router.post('/wlyh/userinfo', wechatCtr.wlyh.updateUserInfo) // 更新用户信息
 router.get('/wlyh/category/all', literatureCtr.category.all) // 获取所有分类列表
 router.get('/wlyh/article/list', literatureCtr.article.list) // 获取文章列表（根据条件）
+router.get('/wlyh/article/chapter/list', literatureCtr.chapter.list) // 获取文章章节列表（根据条件）
 module.exports = router

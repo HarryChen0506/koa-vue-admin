@@ -73,7 +73,7 @@
         }
       }
     },
-    mounted () { 
+    mounted () {
     },
     methods: {
       dispatch () {
